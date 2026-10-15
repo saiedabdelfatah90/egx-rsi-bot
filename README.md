@@ -1,0 +1,1 @@
+# egx-rsi-bot
