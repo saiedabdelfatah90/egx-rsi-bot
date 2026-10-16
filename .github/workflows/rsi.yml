@@ -2,8 +2,7 @@ name: RSI Bot
 
 on:
   schedule:
-    # كل 15 دقيقة، من الأحد للخميس، في ساعات جلسة البورصة (بتوقيت UTC)
-        - cron: "*/5 7-12 * * 0-4"
+    - cron: "*/15 7-12 * * 0-4"
   workflow_dispatch:
 
 permissions:
@@ -11,7 +10,7 @@ permissions:
 
 jobs:
   run-bot:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -29,6 +28,12 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python bot.py
+
+      - name: Run commands
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python commands.py
 
       - name: Save state
         run: |
