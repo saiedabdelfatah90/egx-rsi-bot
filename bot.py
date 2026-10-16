@@ -13,7 +13,7 @@ FRAMES = [("15 دقيقة", Interval.in_15_minute),
           ("ساعة", Interval.in_1_hour),
           ("يومي", Interval.in_daily)]
 
-BUY_LEVEL = 20
+BUY_LEVEL = 25
 SELL_LEVEL = 80
 STATE_FILE = "state.json"
 
