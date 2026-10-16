@@ -7,7 +7,7 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
 # زوّد أسهم EGX70 اللي عايزها (الرمز زي ما هو في TradingView)
-SYMBOLS = ["COMI", "TMGH", "EAST", "ETEL", "SWDY", "ABUK", "ORAS", "FWRY"]
+SYMBOLS = ["SKPC", "ABUK", "AMOC", "EFID", "AJWA", "INFI", "ISMA", "MILS", "MOSC", "MPCO", "NEDA", "UEFM", "ZEOT", "GOUR", "CEFM", "AMES", "AXPH", "CPCI", "SIPC", "SPMD", "NIPH", "FCMD", "ACAMD", "ATLC", "FIRE", "BONY", "APSW", "SPIN", "MCQE", "PRCL", "ARCC", "ETRS", "SAUD", "ADIB", "MTIE", "ICFC", "VERT", "SMFR", "AMII", "EEII", "RUBX", "EGAL", "ALUM", "AALR", "EALR", "IEEC", "INEG", "CAED", "MOED", "ROTO", "EGAS", "AMIA", "KWIN", "GGRN"]
 
 FRAMES = [("15 دقيقة", Interval.in_15_minute),
           ("ساعة", Interval.in_1_hour),
