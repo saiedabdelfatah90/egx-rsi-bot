@@ -13,8 +13,8 @@ FRAMES = [("15 دقيقة", Interval.in_15_minute),
           ("ساعة", Interval.in_1_hour),
           ("يومي", Interval.in_daily)]
 
-BUY1_RSI = 25      # شراء النصف الأول
-BUY2_RSI = 15      # شراء النصف التاني
+BUY1_RSI = 20      # شراء النصف الأول
+BUY2_RSI = 10      # شراء النصف التاني
 TARGET_PCT = 3     # البيع فوق متوسط الشراء بنسبة %
 STOP_PCT = 1       # وقف الخسارة تحت متوسط الشراء بنسبة %
 STATE_FILE = "state.json"
