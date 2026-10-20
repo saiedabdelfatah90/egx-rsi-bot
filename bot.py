@@ -11,14 +11,16 @@ CHAT_ID = os.environ["CHAT_ID"]
 
 SYMBOLS = ["SKPC", "ABUK", "AMOC", "EFID", "AJWA", "INFI", "ISMA", "MILS", "MOSC", "MPCO", "NEDA", "UEFM", "ZEOT", "GOUR", "CEFM", "AMES", "AXPH", "CPCI", "SIPC", "SPMD", "NIPH", "FCMD", "ACAMD", "ATLC", "FIRE", "BONY", "APSW", "SPIN", "MCQE", "PRCL", "ARCC", "ETRS", "SAUD", "ADIB", "MTIE", "ICFC", "VERT", "SMFR", "AMII", "EEII", "RUBX", "EGAL", "ALUM", "AALR", "EALR", "IEEC", "INEG", "CAED", "MOED", "ROTO", "EGAS", "AMIA", "KWIN", "GGRN"]
 
-FRAMES = [("15 دقيقة", Interval.in_15_minute),
-          ("ساعة", Interval.in_1_hour),
-          ("يومي", Interval.in_daily)]
+# (اسم الفريم, الفريم, الهدف الأول %, الهدف الثاني %)
+FRAMES = [
+    ("15 دقيقة", Interval.in_15_minute, 3, 6),
+    ("ساعة", Interval.in_1_hour, 5, 10),
+    ("يومي", Interval.in_daily, 5, 10),
+]
 
-BUY1_RSI = 25
-BUY2_RSI = 15
-TARGET_PCT = 3
-STOP_PCT = 1
+BUY1_RSI = 20     # الشراء الأول عند RSI
+BUY2_DROP = 5     # الشراء التاني بعد نزول السعر % من سعر الشراء الأول
+STOP_PCT = 7      # وقف الخسارة تحت سعر الشراء الأول %
 STATE_FILE = "state.json"
 TRADES_FILE = "trades.json"
 
@@ -40,10 +42,6 @@ def send(text):
         print("خطأ في الإرسال:", e)
 
 
-def levels(avg):
-    return avg * (1 + TARGET_PCT / 100), avg * (1 - STOP_PCT / 100)
-
-
 def load_json(path, default):
     if os.path.exists(path):
         try:
@@ -52,6 +50,10 @@ def load_json(path, default):
         except Exception:
             return default
     return default
+
+
+def now_cairo():
+    return datetime.now(ZoneInfo("Africa/Cairo"))
 
 
 state = load_json(STATE_FILE, {})
@@ -64,9 +66,26 @@ if not os.path.exists(STATE_FILE):
     send("✅ بوت الصفقات اشتغل")
 
 
-def close_trade(sym, name, avg, exit_price, reason):
-    pnl = (exit_price - avg) / avg * 100
-    now = datetime.now(ZoneInfo("Africa/Cairo"))
+def next_buy_number():
+    today = now_cairo().strftime("%Y-%m-%d")
+    seq = state.get("_buy_seq")
+    if not isinstance(seq, dict) or seq.get("date") != today:
+        seq = {"date": today, "n": 0}
+    seq["n"] += 1
+    state["_buy_seq"] = seq
+    return seq["n"]
+
+
+def levels(pos, t1p, t2p):
+    avg = pos["avg"]
+    t1 = avg * (1 + t1p / 100)
+    t2 = avg * (1 + t2p / 100)
+    stop = pos["first"] * (1 - STOP_PCT / 100)
+    return t1, t2, stop
+
+
+def close_trade(sym, name, avg, exit_price, pnl, reason):
+    now = now_cairo()
     trades.append({
         "date": now.strftime("%Y-%m-%d"),
         "time": now.strftime("%H:%M"),
@@ -77,13 +96,12 @@ def close_trade(sym, name, avg, exit_price, reason):
         "pnl": round(pnl, 2),
         "reason": reason,
     })
-    return pnl
 
 
 tv = TvDatafeed()
 
 for sym in SYMBOLS:
-    for name, itv in FRAMES:
+    for name, itv, t1p, t2p in FRAMES:
         try:
             df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
             if df is None or len(df) < 20:
@@ -99,36 +117,70 @@ for sym in SYMBOLS:
             status = pos.get("status", "NONE")
             head = f"السهم: {sym}\nالفريم: {name}\nRSI: {value:.1f}\nالسعر: {price:.2f}"
 
+            # بعد قفل الصفقة نستنى RSI يرجع فوق مستوى الشراء
             if status == "WAIT" and value > BUY1_RSI:
-                status = "NONE"
                 pos = {"status": "NONE"}
+                status = "NONE"
 
             if status == "NONE":
-                if value <= BUY2_RSI:
-                    target, stop = levels(price)
-                    pos = {"status": "FULL", "avg": price, "first": price}
-                    send(f"🟢🟢 شراء الكمية كاملة\n{head}\nالهدف: {target:.2f}\nالوقف: {stop:.2f}")
-                elif value <= BUY1_RSI:
-                    target, stop = levels(price)
-                    pos = {"status": "HALF", "avg": price, "first": price}
-                    send(f"🟢 شراء نصف الكمية\n{head}\nالهدف: {target:.2f}\nالوقف: {stop:.2f}")
+                if value <= BUY1_RSI:
+                    n = next_buy_number()
+                    pos = {"status": "HALF", "avg": price, "first": price,
+                           "t1_done": False, "realized": 0.0}
+                    t1, t2, stop = levels(pos, t1p, t2p)
+                    buy2_at = price * (1 - BUY2_DROP / 100)
+                    send(f"🟢 شراء أول (رقم {n} اليوم)\n{head}\n"
+                         f"الشراء الثاني عند: {buy2_at:.2f}\n"
+                         f"الوقف: {stop:.2f}\n"
+                         f"الهدف الأول (+{t1p}%): {t1:.2f}\n"
+                         f"الهدف الثاني (+{t2p}%): {t2:.2f}")
 
             elif status in ("HALF", "FULL"):
                 avg = pos["avg"]
-                target, stop = levels(avg)
-                if price >= target:
-                    pnl = close_trade(sym, name, avg, price, "target")
-                    send(f"💰 بيع (الهدف)\n{head}\nمتوسط الشراء: {avg:.2f}\nالربح: {pnl:+.2f}%")
+                t1, t2, stop = levels(pos, t1p, t2p)
+                t1_done = pos.get("t1_done", False)
+                realized = pos.get("realized", 0.0)
+                leg = (price - avg) / avg * 100
+                remaining = 0.5 if t1_done else 1.0
+
+                if price <= stop:
+                    total = realized + remaining * leg
+                    reason = "t1+stop" if t1_done else "stop"
+                    close_trade(sym, name, avg, price, total, reason)
+                    send(f"🔴 بيع (وقف خسارة)\n{head}\n"
+                         f"متوسط الشراء: {avg:.2f}\n"
+                         f"نتيجة الصفقة: {total:+.2f}%")
                     pos = {"status": "WAIT"}
-                elif price <= stop:
-                    pnl = close_trade(sym, name, avg, price, "stop")
-                    send(f"🔴 بيع (وقف خسارة)\n{head}\nمتوسط الشراء: {avg:.2f}\nالنتيجة: {pnl:+.2f}%")
+
+                elif price >= t2:
+                    total = realized + remaining * leg
+                    reason = "t1+t2" if t1_done else "t2"
+                    close_trade(sym, name, avg, price, total, reason)
+                    send(f"💰 بيع (الهدف الثاني +{t2p}%)\n{head}\n"
+                         f"متوسط الشراء: {avg:.2f}\n"
+                         f"نتيجة الصفقة: {total:+.2f}%")
                     pos = {"status": "WAIT"}
-                elif status == "HALF" and value <= BUY2_RSI:
+
+                elif (not t1_done) and price >= t1:
+                    pos["t1_done"] = True
+                    pos["realized"] = 0.5 * leg
+                    send(f"💰 بيع نصف الكمية (الهدف الأول +{t1p}%)\n{head}\n"
+                         f"متوسط الشراء: {avg:.2f}\n"
+                         f"ربح النصف: {leg:+.2f}%\n"
+                         f"الهدف الثاني: {t2:.2f}\n"
+                         f"الوقف: {stop:.2f}")
+
+                elif status == "HALF" and (not t1_done) and price <= pos["first"] * (1 - BUY2_DROP / 100):
+                    n = next_buy_number()
                     new_avg = (pos["first"] + price) / 2
-                    target, stop = levels(new_avg)
-                    pos = {"status": "FULL", "avg": new_avg, "first": pos["first"]}
-                    send(f"🟢 شراء النصف التاني\n{head}\nمتوسط الشراء: {new_avg:.2f}\nالهدف: {target:.2f}\nالوقف: {stop:.2f}")
+                    pos["avg"] = new_avg
+                    pos["status"] = "FULL"
+                    t1, t2, stop = levels(pos, t1p, t2p)
+                    send(f"🟢 شراء ثاني (رقم {n} اليوم)\n{head}\n"
+                         f"متوسط الشراء أصبح: {new_avg:.2f}\n"
+                         f"الوقف: {stop:.2f}\n"
+                         f"الهدف الأول (+{t1p}%): {t1:.2f}\n"
+                         f"الهدف الثاني (+{t2p}%): {t2:.2f}")
 
             state[key] = pos
             print(sym, name, round(value, 1), pos["status"])
