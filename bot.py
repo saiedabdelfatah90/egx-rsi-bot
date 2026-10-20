@@ -1,5 +1,8 @@
 import json
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import requests
 from tvDatafeed import TvDatafeed, Interval
 
@@ -8,16 +11,16 @@ CHAT_ID = os.environ["CHAT_ID"]
 
 SYMBOLS = ["SKPC", "ABUK", "AMOC", "EFID", "AJWA", "INFI", "ISMA", "MILS", "MOSC", "MPCO", "NEDA", "UEFM", "ZEOT", "GOUR", "CEFM", "AMES", "AXPH", "CPCI", "SIPC", "SPMD", "NIPH", "FCMD", "ACAMD", "ATLC", "FIRE", "BONY", "APSW", "SPIN", "MCQE", "PRCL", "ARCC", "ETRS", "SAUD", "ADIB", "MTIE", "ICFC", "VERT", "SMFR", "AMII", "EEII", "RUBX", "EGAL", "ALUM", "AALR", "EALR", "IEEC", "INEG", "CAED", "MOED", "ROTO", "EGAS", "AMIA", "KWIN", "GGRN"]
 
-# كل فريم بيتتابع كصفقة مستقلة. امسح أي فريم مش عايزه.
 FRAMES = [("15 دقيقة", Interval.in_15_minute),
           ("ساعة", Interval.in_1_hour),
           ("يومي", Interval.in_daily)]
 
-BUY1_RSI = 20      # شراء النصف الأول
-BUY2_RSI = 10      # شراء النصف التاني
-TARGET_PCT = 3     # البيع فوق متوسط الشراء بنسبة %
-STOP_PCT = 1       # وقف الخسارة تحت متوسط الشراء بنسبة %
+BUY1_RSI = 25
+BUY2_RSI = 15
+TARGET_PCT = 3
+STOP_PCT = 1
 STATE_FILE = "state.json"
+TRADES_FILE = "trades.json"
 
 
 def rsi(close, period=14):
@@ -41,15 +44,41 @@ def levels(avg):
     return avg * (1 + TARGET_PCT / 100), avg * (1 - STOP_PCT / 100)
 
 
-state = {}
-if os.path.exists(STATE_FILE):
-    try:
-        with open(STATE_FILE) as f:
-            state = json.load(f)
-    except Exception:
-        state = {}
-else:
+def load_json(path, default):
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
+    return default
+
+
+state = load_json(STATE_FILE, {})
+trades = load_json(TRADES_FILE, [])
+if not isinstance(state, dict):
+    state = {}
+if not isinstance(trades, list):
+    trades = []
+if not os.path.exists(STATE_FILE):
     send("✅ بوت الصفقات اشتغل")
+
+
+def close_trade(sym, name, avg, exit_price, reason):
+    pnl = (exit_price - avg) / avg * 100
+    now = datetime.now(ZoneInfo("Africa/Cairo"))
+    trades.append({
+        "date": now.strftime("%Y-%m-%d"),
+        "time": now.strftime("%H:%M"),
+        "symbol": sym,
+        "frame": name,
+        "entry": round(avg, 3),
+        "exit": round(exit_price, 3),
+        "pnl": round(pnl, 2),
+        "reason": reason,
+    })
+    return pnl
+
 
 tv = TvDatafeed()
 
@@ -70,7 +99,6 @@ for sym in SYMBOLS:
             status = pos.get("status", "NONE")
             head = f"السهم: {sym}\nالفريم: {name}\nRSI: {value:.1f}\nالسعر: {price:.2f}"
 
-            # بعد البيع نستنى RSI يرجع فوق مستوى الشراء الأول قبل صفقة جديدة
             if status == "WAIT" and value > BUY1_RSI:
                 status = "NONE"
                 pos = {"status": "NONE"}
@@ -89,10 +117,12 @@ for sym in SYMBOLS:
                 avg = pos["avg"]
                 target, stop = levels(avg)
                 if price >= target:
-                    send(f"💰 بيع (الهدف +{TARGET_PCT}%)\n{head}\nمتوسط الشراء: {avg:.2f}")
+                    pnl = close_trade(sym, name, avg, price, "target")
+                    send(f"💰 بيع (الهدف)\n{head}\nمتوسط الشراء: {avg:.2f}\nالربح: {pnl:+.2f}%")
                     pos = {"status": "WAIT"}
                 elif price <= stop:
-                    send(f"🔴 بيع (وقف خسارة)\n{head}\nمتوسط الشراء: {avg:.2f}")
+                    pnl = close_trade(sym, name, avg, price, "stop")
+                    send(f"🔴 بيع (وقف خسارة)\n{head}\nمتوسط الشراء: {avg:.2f}\nالنتيجة: {pnl:+.2f}%")
                     pos = {"status": "WAIT"}
                 elif status == "HALF" and value <= BUY2_RSI:
                     new_avg = (pos["first"] + price) / 2
@@ -105,5 +135,7 @@ for sym in SYMBOLS:
         except Exception as e:
             print(sym, name, "خطأ:", e)
 
-with open(STATE_FILE, "w") as f:
+with open(STATE_FILE, "w", encoding="utf-8") as f:
     json.dump(state, f)
+with open(TRADES_FILE, "w", encoding="utf-8") as f:
+    json.dump(trades, f, ensure_ascii=False)
