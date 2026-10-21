@@ -1,7 +1,7 @@
 import ast
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import requests
@@ -31,11 +31,24 @@ FRAMES = {
 NAME_TO_INTERVAL = {v[0]: v[1] for v in FRAMES.values()}
 NAME_TO_INTERVAL[STOCH_NAME] = Interval.in_30_minute
 FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
+ALL_FRAMES = FRAME_ORDER + [STOCH_NAME]
+SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي", STOCH_NAME: "استوك30"}
 
 # لازم تطابق إعدادات bot.py و stoch.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
 STOP_PCT = 7
 STOCH_STOP_PCT = 1.5
+
+REASONS = {
+    "target": "هدف",
+    "t1+t2": "هدفين",
+    "t2": "هدف ثاني",
+    "stop": "وقف خسارة",
+    "t1+stop": "هدف أول ثم وقف",
+    "stoch": "استوكاستيك",
+    "stoch_stop": "وقف الاستوكاستيك",
+}
+CLOSED_LIMIT = 60
 
 
 def rsi(close, period=14):
@@ -63,10 +76,15 @@ def send(text):
 
 def set_menu():
     cmds = [
-        {"command": "rsi", "description": "تقرير RSI اليومي (أضف h للساعة أو m لـ15 دقيقة)"},
+        {"command": "rsi", "description": "تقرير RSI للفريم اليومي"},
+        {"command": "rsih", "description": "تقرير RSI لفريم الساعة"},
+        {"command": "rsim", "description": "تقرير RSI لفريم 15 دقيقة"},
         {"command": "open", "description": "الصفقات المفتوحة حالياً"},
+        {"command": "closed", "description": "الصفقات المقفولة اليوم بالتفاصيل"},
+        {"command": "closedweek", "description": "الصفقات المقفولة آخر 7 أيام"},
+        {"command": "closedall", "description": "كل الصفقات المقفولة من الأول"},
         {"command": "report", "description": "إحصائية اليوم حتى الآن"},
-        {"command": "help", "description": "قايمة الاختصارات"},
+        {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
         requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/setMyCommands",
@@ -87,9 +105,12 @@ def build_help():
     return (
         "📋 الاختصارات:\n\n"
         "/rsi — تقرير RSI للفريم اليومي (فوق وتحت المتوسط 50)\n"
-        "/rsi h — نفس التقرير على فريم الساعة\n"
-        "/rsi m — نفس التقرير على فريم 15 دقيقة\n"
+        "/rsih — نفس التقرير على فريم الساعة\n"
+        "/rsim — نفس التقرير على فريم 15 دقيقة\n"
         "/open — الصفقات المفتوحة (RSI والاستوكاستيك)\n"
+        "/closed — الصفقات المقفولة النهاردة بالتفاصيل\n"
+        "/closedweek — الصفقات المقفولة آخر 7 أيام\n"
+        "/closedall — كل الصفقات المقفولة من الأول\n"
         "/report — إحصائية اليوم حتى الآن\n"
         "/help — القايمة دي\n\n"
         "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 15 دقيقة في ساعات الجلسة).\n"
@@ -260,15 +281,14 @@ def load_list(path):
 def build_today_report(state, stoch_state):
     today = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d")
     todays = [t for t in load_list(TRADES_FILE) if t.get("date") == today]
-    all_frames = FRAME_ORDER + [STOCH_NAME]
 
     parts = [f"📅 إحصائية يوم {today} (حتى الآن)", ""]
-    for fr in all_frames:
+    for fr in ALL_FRAMES:
         parts.append(stats_block(f"فريم {fr}", [t for t in todays if t.get("frame") == fr]))
         parts.append("")
     parts.append(stats_block("الإجمالي", todays))
 
-    open_counts = {fr: 0 for fr in all_frames}
+    open_counts = {fr: 0 for fr in ALL_FRAMES}
     for key, pos in state.items():
         if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL") and "|" in key:
             fr = key.split("|", 1)[-1]
@@ -282,6 +302,47 @@ def build_today_report(state, stoch_state):
     return "\n".join(parts)
 
 
+def build_closed(period):
+    now = datetime.now(ZoneInfo("Africa/Cairo"))
+    today = now.strftime("%Y-%m-%d")
+    trades = load_list(TRADES_FILE)
+
+    if period == "today":
+        items = [t for t in trades if t.get("date") == today]
+        title = f"اليوم {today}"
+    elif period == "week":
+        start = (now - timedelta(days=6)).strftime("%Y-%m-%d")
+        items = [t for t in trades if t.get("date", "") >= start]
+        title = "آخر 7 أيام"
+    else:
+        items = list(trades)
+        title = "كل الصفقات"
+
+    items = sorted(items, key=lambda t: (t.get("date", ""), t.get("time", "")))
+    lines = [f"📕 الصفقات المقفولة — {title} ({len(items)})", ""]
+    if not items:
+        lines.append("لا توجد صفقات مقفولة في الفترة دي")
+        return "\n".join(lines)
+
+    for fr in ALL_FRAMES:
+        lines.append(stats_block(f"فريم {fr}", [t for t in items if t.get("frame") == fr]))
+        lines.append("")
+    lines.append(stats_block("الإجمالي", items))
+    lines.append("")
+    lines.append("📋 التفاصيل (الأحدث أولاً):")
+
+    shown = items[::-1][:CLOSED_LIMIT]
+    for t in shown:
+        mark = "✅" if t.get("pnl", 0) > 0 else "❌"
+        reason = REASONS.get(t.get("reason", ""), t.get("reason", ""))
+        fr = SHORT_FRAME.get(t.get("frame", ""), t.get("frame", ""))
+        lines.append(f"{mark} {t.get('date', '')[5:]} {t.get('time', '')} | {t.get('symbol', '')} | {fr}")
+        lines.append(f"   {t.get('entry', 0):.2f} ← {t.get('exit', 0):.2f} | {t.get('pnl', 0):+.2f}% | {reason}")
+    if len(items) > CLOSED_LIMIT:
+        lines.append(f"... وفيه {len(items) - CLOSED_LIMIT} صفقة أقدم مش معروضة")
+    return "\n".join(lines)
+
+
 # ---------- نقرا الأوامر الجديدة ----------
 state = load_dict(STATE_FILE)
 stoch_state = load_dict(STOCH_STATE_FILE)
@@ -293,9 +354,17 @@ r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates",
                  params={"offset": last + 1, "timeout": 0}, timeout=20).json()
 
 wanted = []
+closed_wanted = []
 want_open = False
 want_help = False
 want_report = False
+
+
+def add_closed(period):
+    if period not in closed_wanted:
+        closed_wanted.append(period)
+
+
 for u in r.get("result", []):
     last = max(last, u["update_id"])
     msg = u.get("message")
@@ -305,23 +374,41 @@ for u in r.get("result", []):
     if not parts:
         continue
     cmd = parts[0].split("@")[0].lower()
-    if cmd == "/rsi":
-        arg = parts[1].lower() if len(parts) > 1 else "d"
-        if arg not in FRAMES:
-            arg = "d"
-        if arg not in wanted:
-            wanted.append(arg)
+    arg = parts[1].lower() if len(parts) > 1 else ""
+
+    if cmd in ("/rsi", "/rsih", "/rsim"):
+        if cmd == "/rsih":
+            key = "h"
+        elif cmd == "/rsim":
+            key = "m"
+        else:
+            key = arg if arg in FRAMES else "d"
+        if key not in wanted:
+            wanted.append(key)
     elif cmd in ("/open", "/trades"):
         want_open = True
     elif cmd in ("/help", "/start"):
         want_help = True
     elif cmd == "/report":
         want_report = True
+    elif cmd == "/closed":
+        if arg in ("week", "w"):
+            add_closed("week")
+        elif arg in ("all", "a"):
+            add_closed("all")
+        else:
+            add_closed("today")
+    elif cmd == "/closedweek":
+        add_closed("week")
+    elif cmd == "/closedall":
+        add_closed("all")
 
 if want_help:
     send(build_help())
 if want_report:
     send(build_today_report(state, stoch_state))
+for period in closed_wanted:
+    send(build_closed(period))
 if wanted or want_open:
     tv = TvDatafeed()
     for key in wanted:
