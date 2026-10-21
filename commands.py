@@ -8,6 +8,7 @@ from tvDatafeed import TvDatafeed, Interval
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 STATE_FILE = "state.json"
+STOCH_STATE_FILE = "stoch_state.json"
 
 # نقرا قايمة الأسهم من bot.py عشان تعدّلها في مكان واحد بس
 SYMBOLS = []
@@ -17,17 +18,21 @@ with open("bot.py", encoding="utf-8") as f:
                 and node.targets[0].id == "SYMBOLS":
             SYMBOLS = ast.literal_eval(node.value)
 
+STOCH_NAME = "30 دقيقة استوكاستيك"
+
 FRAMES = {
     "d": ("يومي", Interval.in_daily),
     "h": ("ساعة", Interval.in_1_hour),
     "m": ("15 دقيقة", Interval.in_15_minute),
 }
 NAME_TO_INTERVAL = {v[0]: v[1] for v in FRAMES.values()}
+NAME_TO_INTERVAL[STOCH_NAME] = Interval.in_30_minute
 FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
 
-# لازم تطابق إعدادات bot.py (لو غيّرتها هناك، غيّرها هنا)
+# لازم تطابق إعدادات bot.py و stoch.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
 STOP_PCT = 7
+STOCH_STOP_PCT = 1.5
 
 
 def rsi(close, period=14):
@@ -103,7 +108,7 @@ def current_price(tv, sym, fr):
         return None
 
 
-def build_open_report(tv, state):
+def build_open_report(tv, state, stoch_state):
     by_frame = {fr: [] for fr in FRAME_ORDER}
     for key, pos in state.items():
         if not isinstance(pos, dict) or pos.get("status") not in ("HALF", "FULL"):
@@ -114,7 +119,12 @@ def build_open_report(tv, state):
         if fr in by_frame:
             by_frame[fr].append((sym, pos))
 
-    total = sum(len(v) for v in by_frame.values())
+    stoch_items = sorted(
+        [(sym, p) for sym, p in stoch_state.items()
+         if isinstance(p, dict) and p.get("status") == "OPEN"],
+        key=lambda x: x[0])
+
+    total = sum(len(v) for v in by_frame.values()) + len(stoch_items)
     if total == 0:
         return "🔓 لا توجد صفقات مفتوحة حالياً"
 
@@ -152,17 +162,40 @@ def build_open_report(tv, state):
             lines.append(f"الهدف الأول (+{t1p}%): {t1:.2f}" + (" ✅" if t1_done else ""))
             lines.append(f"الهدف الثاني (+{t2p}%): {t2:.2f}")
             lines.append("")
+
+    if stoch_items:
+        lines.append(f"━━ فريم {STOCH_NAME} ({len(stoch_items)}) ━━")
+        for sym, pos in stoch_items:
+            entry = pos["entry"]
+            stop = entry * (1 - STOCH_STOP_PCT / 100)
+            price = current_price(tv, sym, STOCH_NAME)
+            lines.append(f"📌 {sym}")
+            lines.append(f"سعر الشراء: {entry:.2f}")
+            if price is None:
+                lines.append("السعر الحالي: غير متاح")
+            else:
+                result = (price - entry) / entry * 100
+                lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {result:+.2f}%")
+            lines.append(f"الوقف: {stop:.2f} (-{STOCH_STOP_PCT}%)")
+            lines.append("البيع: عند تقاطع هابط في المنطقة العليا (فوق 80) أو عند الوقف")
+            lines.append("")
     return "\n".join(lines)
 
 
 # ---------- نقرا الأوامر الجديدة ----------
-state = {}
-if os.path.exists(STATE_FILE):
-    try:
-        with open(STATE_FILE) as f:
-            state = json.load(f)
-    except Exception:
-        state = {}
+def load_state(path):
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+                return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+    return {}
+
+
+state = load_state(STATE_FILE)
+stoch_state = load_state(STOCH_STATE_FILE)
 
 last = int(state.get("_last_update_id", 0))
 r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates",
@@ -193,7 +226,7 @@ if wanted or want_open:
     for key in wanted:
         send(build_report(tv, key))
     if want_open:
-        send(build_open_report(tv, state))
+        send(build_open_report(tv, state, stoch_state))
 
 state["_last_update_id"] = last
 with open(STATE_FILE, "w") as f:
