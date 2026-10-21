@@ -9,7 +9,7 @@ from tvDatafeed import TvDatafeed, Interval
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
-SYMBOLS = ["SKPC", "ABUK", "AMOC", "EFID", "AJWA", "INFI", "ISMA", "MILS", "MOSC", "MPCO", "NEDA", "UEFM", "ZEOT", "GOUR", "CEFM", "AMES", "AXPH", "CPCI", "SIPC", "SPMD", "NIPH", "FCMD", "ACAMD", "ATLC", "FIRE", "BONY", "APSW", "SPIN", "MCQE", "PRCL", "ARCC", "ETRS", "SAUD", "ADIB", "MTIE", "ICFC", "VERT", "SMFR", "AMII", "EEII", "RUBX", "EGAL", "ALUM", "AALR", "EALR", "IEEC", "INEG", "CAED", "MOED", "ROTO", "EGAS", "AMIA", "KWIN", "GGRN"]
+SYMBOLS = ["EGAL", "EGAS", "ICFC", "MPCO", "MTIE", "SKPC", "AMOC", "ARCC", "ATQA", "BIOC", "COSG", "CRST", "IEEC", "IFAP", "ISMA", "MBSC", "MOED", "PRCL", "SPMD", "ZEOT", "AJWA", "CIRA", "CLHO", "EFID", "ETRS", "ISPH", "JUFO", "MCQE", "ORWE", "RACC", "SPIN", "ALUM", "AMES", "APSW", "AXPH", "CAED", "CPCI", "ETEL", "INFI", "KABO", "KRDI", "LCSW", "MILS", "MOSC", "NIPH", "ORAS", "RMDA", "RUBX", "SIPC", "SVCE", "UEFM", "AALR", "AIFI", "CERA", "EALR", "GGRN", "GOUR", "MCRO", "OBRI", "OCPH", "SCEM", "SMFR", "SWDY", "TALM", "MBEG", "ACGC", "ADCI", "AMII", "BIGP", "BONY", "DGTZ", "EEII", "EFIC", "EPCO", "FCMD", "FNAR", "INEG", "LUTS", "MPCI", "OLFI", "ROTO", "VERT"]
 
 # (اسم الفريم, الفريم, الهدف الأول %, الهدف الثاني %)
 FRAMES = [
