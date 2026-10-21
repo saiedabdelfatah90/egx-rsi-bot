@@ -1,6 +1,8 @@
 import ast
 import json
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import requests
 from tvDatafeed import TvDatafeed, Interval
@@ -9,6 +11,7 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 STATE_FILE = "state.json"
 STOCH_STATE_FILE = "stoch_state.json"
+TRADES_FILE = "trades.json"
 
 # نقرا قايمة الأسهم من bot.py عشان تعدّلها في مكان واحد بس
 SYMBOLS = []
@@ -58,12 +61,40 @@ def send(text):
                       data={"chat_id": CHAT_ID, "text": chunk}, timeout=20)
 
 
+def set_menu():
+    cmds = [
+        {"command": "rsi", "description": "تقرير RSI اليومي (أضف h للساعة أو m لـ15 دقيقة)"},
+        {"command": "open", "description": "الصفقات المفتوحة حالياً"},
+        {"command": "report", "description": "إحصائية اليوم حتى الآن"},
+        {"command": "help", "description": "قايمة الاختصارات"},
+    ]
+    try:
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/setMyCommands",
+                      json={"commands": cmds}, timeout=20)
+    except Exception as e:
+        print("setMyCommands:", e)
+
+
 def tag(value):
     if value <= 25:
         return " ⚠️"
     if value >= 75:
         return " 🔥"
     return ""
+
+
+def build_help():
+    return (
+        "📋 الاختصارات:\n\n"
+        "/rsi — تقرير RSI للفريم اليومي (فوق وتحت المتوسط 50)\n"
+        "/rsi h — نفس التقرير على فريم الساعة\n"
+        "/rsi m — نفس التقرير على فريم 15 دقيقة\n"
+        "/open — الصفقات المفتوحة (RSI والاستوكاستيك)\n"
+        "/report — إحصائية اليوم حتى الآن\n"
+        "/help — القايمة دي\n\n"
+        "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 15 دقيقة في ساعات الجلسة).\n"
+        "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
+    )
 
 
 def build_report(tv, key):
@@ -182,8 +213,29 @@ def build_open_report(tv, state, stoch_state):
     return "\n".join(lines)
 
 
-# ---------- نقرا الأوامر الجديدة ----------
-def load_state(path):
+def stats(items):
+    wins = [t["pnl"] for t in items if t["pnl"] > 0]
+    losses = [t["pnl"] for t in items if t["pnl"] <= 0]
+    total = len(items)
+    rate = (len(wins) / total * 100) if total else 0
+    return len(wins), len(losses), rate, sum(wins), sum(losses)
+
+
+def stats_block(title, items):
+    w, l, rate, sw, sl = stats(items)
+    lines = [f"━━ {title} ━━"]
+    if not items:
+        lines.append("لا توجد صفقات مغلقة")
+        return "\n".join(lines)
+    lines.append(f"✅ ناجحة: {w} | نسبة النجاح: {rate:.1f}%")
+    lines.append(f"   مجموع الأرباح: {sw:+.2f}%")
+    lines.append(f"❌ خاسرة: {l}")
+    lines.append(f"   مجموع الخسائر: {sl:+.2f}%")
+    lines.append(f"📈 الصافي: {sw + sl:+.2f}%")
+    return "\n".join(lines)
+
+
+def load_dict(path):
     if os.path.exists(path):
         try:
             with open(path, encoding="utf-8") as f:
@@ -194,8 +246,47 @@ def load_state(path):
     return {}
 
 
-state = load_state(STATE_FILE)
-stoch_state = load_state(STOCH_STATE_FILE)
+def load_list(path):
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+                return data if isinstance(data, list) else []
+        except Exception:
+            return []
+    return []
+
+
+def build_today_report(state, stoch_state):
+    today = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d")
+    todays = [t for t in load_list(TRADES_FILE) if t.get("date") == today]
+    all_frames = FRAME_ORDER + [STOCH_NAME]
+
+    parts = [f"📅 إحصائية يوم {today} (حتى الآن)", ""]
+    for fr in all_frames:
+        parts.append(stats_block(f"فريم {fr}", [t for t in todays if t.get("frame") == fr]))
+        parts.append("")
+    parts.append(stats_block("الإجمالي", todays))
+
+    open_counts = {fr: 0 for fr in all_frames}
+    for key, pos in state.items():
+        if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL") and "|" in key:
+            fr = key.split("|", 1)[-1]
+            if fr in open_counts:
+                open_counts[fr] += 1
+    open_counts[STOCH_NAME] = sum(1 for p in stoch_state.values()
+                                  if isinstance(p, dict) and p.get("status") == "OPEN")
+    parts.append("")
+    parts.append("🔓 صفقات لسه مفتوحة:")
+    parts += [f"{fr}: {n}" for fr, n in open_counts.items()]
+    return "\n".join(parts)
+
+
+# ---------- نقرا الأوامر الجديدة ----------
+state = load_dict(STATE_FILE)
+stoch_state = load_dict(STOCH_STATE_FILE)
+
+set_menu()
 
 last = int(state.get("_last_update_id", 0))
 r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates",
@@ -203,6 +294,8 @@ r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates",
 
 wanted = []
 want_open = False
+want_help = False
+want_report = False
 for u in r.get("result", []):
     last = max(last, u["update_id"])
     msg = u.get("message")
@@ -220,7 +313,15 @@ for u in r.get("result", []):
             wanted.append(arg)
     elif cmd in ("/open", "/trades"):
         want_open = True
+    elif cmd in ("/help", "/start"):
+        want_help = True
+    elif cmd == "/report":
+        want_report = True
 
+if want_help:
+    send(build_help())
+if want_report:
+    send(build_today_report(state, stoch_state))
 if wanted or want_open:
     tv = TvDatafeed()
     for key in wanted:
