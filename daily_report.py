@@ -7,7 +7,8 @@ import requests
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
-FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
+STOCH_NAME = "30 دقيقة استوكاستيك"
+FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي", STOCH_NAME]
 
 
 def load_json(path, default):
@@ -50,6 +51,7 @@ def block(title, items):
 today = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d")
 trades = load_json("trades.json", [])
 state = load_json("state.json", {})
+stoch_state = load_json("stoch_state.json", {})
 todays = [t for t in trades if t.get("date") == today]
 
 parts = [f"📅 تقرير يوم {today}", ""]
@@ -60,11 +62,14 @@ parts.append(block("الإجمالي", todays))
 
 open_counts = {fr: 0 for fr in FRAME_ORDER}
 for key, pos in state.items():
-    if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL"):
-        fr = key.split("|")[-1]
+    if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL") and "|" in key:
+        fr = key.split("|", 1)[-1]
         if fr in open_counts:
             open_counts[fr] += 1
+open_counts[STOCH_NAME] = sum(1 for p in stoch_state.values()
+                              if isinstance(p, dict) and p.get("status") == "OPEN")
 parts.append("")
-parts.append("🔓 صفقات لسه مفتوحة: " + " | ".join(f"{fr}: {n}" for fr, n in open_counts.items()))
+parts.append("🔓 صفقات لسه مفتوحة:")
+parts += [f"{fr}: {n}" for fr, n in open_counts.items()]
 
 send("\n".join(parts))
