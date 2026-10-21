@@ -24,6 +24,7 @@ SMOOTH_K = 3
 D_PERIOD = 3
 OVERSOLD = 20
 OVERBOUGHT = 80
+STOP_PCT = 1.5   # وقف الخسارة تحت سعر الشراء % (لو غيّرته، غيّره في commands.py كمان)
 STATE_FILE = "stoch_state.json"
 TRADES_FILE = "trades.json"
 
@@ -62,6 +63,30 @@ if not isinstance(state, dict):
 if not isinstance(trades, list):
     trades = []
 
+
+def close_position(sym, entry, price, reason, header):
+    pnl = (price - entry) / entry * 100
+    now = datetime.now(ZoneInfo("Africa/Cairo"))
+    trades.append({
+        "date": now.strftime("%Y-%m-%d"),
+        "time": now.strftime("%H:%M"),
+        "symbol": sym,
+        "frame": FRAME_NAME,
+        "entry": round(entry, 3),
+        "exit": round(price, 3),
+        "pnl": round(pnl, 2),
+        "reason": reason,
+    })
+    send(header)
+    word = "ربح" if pnl > 0 else "خسارة"
+    emoji = "✅" if pnl > 0 else "❌"
+    send(f"{emoji} انتهاء الصفقة وفقاً للاستوكاستيك\n"
+         f"السهم: {sym} | فريم 30 دقيقة\n"
+         f"شراء: {entry:.2f} | بيع: {price:.2f}\n"
+         f"النتيجة: {word} {pnl:+.2f}%")
+    return pnl
+
+
 tv = TvDatafeed()
 
 for sym in SYMBOLS:
@@ -72,15 +97,33 @@ for sym in SYMBOLS:
             continue
 
         price = float(df["close"].iloc[-1])   # السعر الحالي
-        closed = df.iloc[:-1]                 # الشموع المقفولة بس
+        pos = state.get(sym)
+        if not isinstance(pos, dict):
+            pos = {"status": "NONE"}
+
+        # 1) وقف الخسارة (بيتفحص في كل تشغيل)
+        if pos.get("status") == "OPEN":
+            entry = pos["entry"]
+            stop = entry * (1 - STOP_PCT / 100)
+            if price <= stop:
+                close_position(
+                    sym, entry, price, "stoch_stop",
+                    f"🔴 بيع — وقف الخسارة ({STOP_PCT}%) على صفقة الاستوكاستيك\n"
+                    f"الفريم: 30 دقيقة\n"
+                    f"السهم: {sym}\n"
+                    f"سعر البيع: {price:.2f}\n"
+                    f"سعر الشراء: {entry:.2f}")
+                state[sym] = {"status": "NONE", "last_bar": pos.get("last_bar")}
+                print(sym, "وقف خسارة")
+                continue
+
+        # 2) إشارات التقاطع على الشموع المقفولة
+        closed = df.iloc[:-1]
         k, d = stochastic(closed)
         if k.iloc[-2:].isna().any() or d.iloc[-2:].isna().any():
             continue
 
         bar = str(closed.index[-1])
-        pos = state.get(sym)
-        if not isinstance(pos, dict):
-            pos = {"status": "NONE"}
         if pos.get("last_bar") == bar:
             continue   # الشمعة دي اتفحصت قبل كده
 
@@ -91,10 +134,12 @@ for sym in SYMBOLS:
 
         if pos.get("status") == "NONE":
             if cross_up and min(k0, d0) < OVERSOLD:
+                stop_price = price * (1 - STOP_PCT / 100)
                 send(f"🟢 شراء — وفقاً للاستوكاستيك\n"
                      f"الفريم: 30 دقيقة\n"
                      f"السهم: {sym}\n"
                      f"سعر الشراء: {price:.2f}\n"
+                     f"الوقف: {stop_price:.2f} (-{STOP_PCT}%)\n"
                      f"Stoch %K: {k1:.1f} | %D: {d1:.1f}\n"
                      f"تقاطع صاعد في المنطقة الدنيا (تحت {OVERSOLD})")
                 pos = {"status": "OPEN", "entry": price}
@@ -102,31 +147,15 @@ for sym in SYMBOLS:
         elif pos.get("status") == "OPEN":
             if cross_dn and max(k0, d0) > OVERBOUGHT:
                 entry = pos["entry"]
-                pnl = (price - entry) / entry * 100
-                now = datetime.now(ZoneInfo("Africa/Cairo"))
-                trades.append({
-                    "date": now.strftime("%Y-%m-%d"),
-                    "time": now.strftime("%H:%M"),
-                    "symbol": sym,
-                    "frame": FRAME_NAME,
-                    "entry": round(entry, 3),
-                    "exit": round(price, 3),
-                    "pnl": round(pnl, 2),
-                    "reason": "stoch",
-                })
-                send(f"🔴 بيع — وفقاً للاستوكاستيك\n"
-                     f"الفريم: 30 دقيقة\n"
-                     f"السهم: {sym}\n"
-                     f"سعر البيع: {price:.2f}\n"
-                     f"سعر الشراء: {entry:.2f}\n"
-                     f"Stoch %K: {k1:.1f} | %D: {d1:.1f}\n"
-                     f"تقاطع هابط في المنطقة العليا (فوق {OVERBOUGHT})")
-                word = "ربح" if pnl > 0 else "خسارة"
-                emoji = "✅" if pnl > 0 else "❌"
-                send(f"{emoji} انتهاء الصفقة وفقاً للاستوكاستيك\n"
-                     f"السهم: {sym} | فريم 30 دقيقة\n"
-                     f"شراء: {entry:.2f} | بيع: {price:.2f}\n"
-                     f"النتيجة: {word} {pnl:+.2f}%")
+                close_position(
+                    sym, entry, price, "stoch",
+                    f"🔴 بيع — وفقاً للاستوكاستيك\n"
+                    f"الفريم: 30 دقيقة\n"
+                    f"السهم: {sym}\n"
+                    f"سعر البيع: {price:.2f}\n"
+                    f"سعر الشراء: {entry:.2f}\n"
+                    f"Stoch %K: {k1:.1f} | %D: {d1:.1f}\n"
+                    f"تقاطع هابط في المنطقة العليا (فوق {OVERBOUGHT})")
                 pos = {"status": "NONE"}
 
         pos["last_bar"] = bar
