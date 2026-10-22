@@ -10,7 +10,6 @@ from tvDatafeed import TvDatafeed, Interval
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 STATE_FILE = "state.json"
-STOCH_STATE_FILE = "stoch_state.json"
 TRADES_FILE = "trades.json"
 
 # نقرا قايمة الأسهم من bot.py عشان تعدّلها في مكان واحد بس
@@ -21,23 +20,18 @@ with open("bot.py", encoding="utf-8") as f:
                 and node.targets[0].id == "SYMBOLS":
             SYMBOLS = ast.literal_eval(node.value)
 
-STOCH_NAME = "30 دقيقة استوكاستيك"
-
 FRAMES = {
     "d": ("يومي", Interval.in_daily),
     "h": ("ساعة", Interval.in_1_hour),
     "m": ("15 دقيقة", Interval.in_15_minute),
 }
 NAME_TO_INTERVAL = {v[0]: v[1] for v in FRAMES.values()}
-NAME_TO_INTERVAL[STOCH_NAME] = Interval.in_30_minute
 FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
-ALL_FRAMES = FRAME_ORDER + [STOCH_NAME]
-SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي", STOCH_NAME: "استوك30"}
+SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي"}
 
-# لازم تطابق إعدادات bot.py و stoch.py (لو غيّرتها هناك، غيّرها هنا)
+# لازم تطابق إعدادات bot.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
 STOP_PCT = 7
-STOCH_STOP_PCT = 1.5
 
 REASONS = {
     "target": "هدف",
@@ -45,8 +39,6 @@ REASONS = {
     "t2": "هدف ثاني",
     "stop": "وقف خسارة",
     "t1+stop": "هدف أول ثم وقف",
-    "stoch": "استوكاستيك",
-    "stoch_stop": "وقف الاستوكاستيك",
 }
 CLOSED_LIMIT = 60
 
@@ -107,13 +99,13 @@ def build_help():
         "/rsi — تقرير RSI للفريم اليومي (فوق وتحت المتوسط 50)\n"
         "/rsih — نفس التقرير على فريم الساعة\n"
         "/rsim — نفس التقرير على فريم 15 دقيقة\n"
-        "/open — الصفقات المفتوحة (RSI والاستوكاستيك)\n"
+        "/open — الصفقات المفتوحة\n"
         "/closed — الصفقات المقفولة النهاردة بالتفاصيل\n"
         "/closedweek — الصفقات المقفولة آخر 7 أيام\n"
         "/closedall — كل الصفقات المقفولة من الأول\n"
         "/report — إحصائية اليوم حتى الآن\n"
         "/help — القايمة دي\n\n"
-        "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 15 دقيقة في ساعات الجلسة).\n"
+        "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 5 دقايق في ساعات الجلسة).\n"
         "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
     )
 
@@ -160,7 +152,7 @@ def current_price(tv, sym, fr):
         return None
 
 
-def build_open_report(tv, state, stoch_state):
+def build_open_report(tv, state):
     by_frame = {fr: [] for fr in FRAME_ORDER}
     for key, pos in state.items():
         if not isinstance(pos, dict) or pos.get("status") not in ("HALF", "FULL"):
@@ -171,12 +163,7 @@ def build_open_report(tv, state, stoch_state):
         if fr in by_frame:
             by_frame[fr].append((sym, pos))
 
-    stoch_items = sorted(
-        [(sym, p) for sym, p in stoch_state.items()
-         if isinstance(p, dict) and p.get("status") == "OPEN"],
-        key=lambda x: x[0])
-
-    total = sum(len(v) for v in by_frame.values()) + len(stoch_items)
+    total = sum(len(v) for v in by_frame.values())
     if total == 0:
         return "🔓 لا توجد صفقات مفتوحة حالياً"
 
@@ -214,23 +201,6 @@ def build_open_report(tv, state, stoch_state):
             lines.append(f"الهدف الأول (+{t1p}%): {t1:.2f}" + (" ✅" if t1_done else ""))
             lines.append(f"الهدف الثاني (+{t2p}%): {t2:.2f}")
             lines.append("")
-
-    if stoch_items:
-        lines.append(f"━━ فريم {STOCH_NAME} ({len(stoch_items)}) ━━")
-        for sym, pos in stoch_items:
-            entry = pos["entry"]
-            stop = entry * (1 - STOCH_STOP_PCT / 100)
-            price = current_price(tv, sym, STOCH_NAME)
-            lines.append(f"📌 {sym}")
-            lines.append(f"سعر الشراء: {entry:.2f}")
-            if price is None:
-                lines.append("السعر الحالي: غير متاح")
-            else:
-                result = (price - entry) / entry * 100
-                lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {result:+.2f}%")
-            lines.append(f"الوقف: {stop:.2f} (-{STOCH_STOP_PCT}%)")
-                        lines.append("البيع: عند وصول الاستوكاستيك لـ 80 أو عند الوقف")
-            lines.append("")
     return "\n".join(lines)
 
 
@@ -267,35 +237,35 @@ def load_dict(path):
     return {}
 
 
-def load_list(path):
-    if os.path.exists(path):
+def load_trades():
+    # بنقرا صفقات الفريمات الثلاثة بس
+    if os.path.exists(TRADES_FILE):
         try:
-            with open(path, encoding="utf-8") as f:
+            with open(TRADES_FILE, encoding="utf-8") as f:
                 data = json.load(f)
-                return data if isinstance(data, list) else []
+                if isinstance(data, list):
+                    return [t for t in data if t.get("frame") in FRAME_ORDER]
         except Exception:
             return []
     return []
 
 
-def build_today_report(state, stoch_state):
+def build_today_report(state):
     today = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d")
-    todays = [t for t in load_list(TRADES_FILE) if t.get("date") == today]
+    todays = [t for t in load_trades() if t.get("date") == today]
 
     parts = [f"📅 إحصائية يوم {today} (حتى الآن)", ""]
-    for fr in ALL_FRAMES:
+    for fr in FRAME_ORDER:
         parts.append(stats_block(f"فريم {fr}", [t for t in todays if t.get("frame") == fr]))
         parts.append("")
     parts.append(stats_block("الإجمالي", todays))
 
-    open_counts = {fr: 0 for fr in ALL_FRAMES}
+    open_counts = {fr: 0 for fr in FRAME_ORDER}
     for key, pos in state.items():
         if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL") and "|" in key:
             fr = key.split("|", 1)[-1]
             if fr in open_counts:
                 open_counts[fr] += 1
-    open_counts[STOCH_NAME] = sum(1 for p in stoch_state.values()
-                                  if isinstance(p, dict) and p.get("status") == "OPEN")
     parts.append("")
     parts.append("🔓 صفقات لسه مفتوحة:")
     parts += [f"{fr}: {n}" for fr, n in open_counts.items()]
@@ -305,7 +275,7 @@ def build_today_report(state, stoch_state):
 def build_closed(period):
     now = datetime.now(ZoneInfo("Africa/Cairo"))
     today = now.strftime("%Y-%m-%d")
-    trades = load_list(TRADES_FILE)
+    trades = load_trades()
 
     if period == "today":
         items = [t for t in trades if t.get("date") == today]
@@ -324,7 +294,7 @@ def build_closed(period):
         lines.append("لا توجد صفقات مقفولة في الفترة دي")
         return "\n".join(lines)
 
-    for fr in ALL_FRAMES:
+    for fr in FRAME_ORDER:
         lines.append(stats_block(f"فريم {fr}", [t for t in items if t.get("frame") == fr]))
         lines.append("")
     lines.append(stats_block("الإجمالي", items))
@@ -345,7 +315,6 @@ def build_closed(period):
 
 # ---------- نقرا الأوامر الجديدة ----------
 state = load_dict(STATE_FILE)
-stoch_state = load_dict(STOCH_STATE_FILE)
 
 set_menu()
 
@@ -406,7 +375,7 @@ for u in r.get("result", []):
 if want_help:
     send(build_help())
 if want_report:
-    send(build_today_report(state, stoch_state))
+    send(build_today_report(state))
 for period in closed_wanted:
     send(build_closed(period))
 if wanted or want_open:
@@ -414,7 +383,7 @@ if wanted or want_open:
     for key in wanted:
         send(build_report(tv, key))
     if want_open:
-        send(build_open_report(tv, state, stoch_state))
+        send(build_open_report(tv, state))
 
 state["_last_update_id"] = last
 with open(STATE_FILE, "w") as f:
