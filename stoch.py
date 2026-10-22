@@ -22,8 +22,8 @@ FRAME_NAME = "30 دقيقة استوكاستيك"
 K_PERIOD = 14
 SMOOTH_K = 3
 D_PERIOD = 3
-OVERSOLD = 20
-OVERBOUGHT = 80
+OVERSOLD = 20    # الشراء: تقاطع صاعد تحت المستوى ده
+SELL_LEVEL = 80  # البيع: لما %K يوصل للمستوى ده
 STOP_PCT = 1.5   # وقف الخسارة تحت سعر الشراء % (لو غيّرته، غيّره في commands.py كمان)
 STATE_FILE = "stoch_state.json"
 TRADES_FILE = "trades.json"
@@ -101,9 +101,10 @@ for sym in SYMBOLS:
         if not isinstance(pos, dict):
             pos = {"status": "NONE"}
 
-        # 1) وقف الخسارة (بيتفحص في كل تشغيل)
         if pos.get("status") == "OPEN":
             entry = pos["entry"]
+
+            # 1) وقف الخسارة (بيتفحص في كل تشغيل)
             stop = entry * (1 - STOP_PCT / 100)
             if price <= stop:
                 close_position(
@@ -117,7 +118,26 @@ for sym in SYMBOLS:
                 print(sym, "وقف خسارة")
                 continue
 
-        # 2) إشارات التقاطع على الشموع المقفولة
+            # 2) هدف البيع: الاستوكاستيك يوصل 80 (على الشمعة الحالية)
+            k_live, d_live = stochastic(df)
+            if not k_live.iloc[-1:].isna().any() and not d_live.iloc[-1:].isna().any():
+                k_now = float(k_live.iloc[-1])
+                d_now = float(d_live.iloc[-1])
+                if k_now >= SELL_LEVEL:
+                    close_position(
+                        sym, entry, price, "stoch",
+                        f"🔴 بيع — وفقاً للاستوكاستيك\n"
+                        f"الفريم: 30 دقيقة\n"
+                        f"السهم: {sym}\n"
+                        f"سعر البيع: {price:.2f}\n"
+                        f"سعر الشراء: {entry:.2f}\n"
+                        f"Stoch %K: {k_now:.1f} | %D: {d_now:.1f}\n"
+                        f"الاستوكاستيك وصل {SELL_LEVEL}")
+                    state[sym] = {"status": "NONE", "last_bar": pos.get("last_bar")}
+                    print(sym, "بيع عند", round(k_now, 1))
+                    continue
+
+        # 3) إشارة الشراء: تقاطع صاعد على الشموع المقفولة
         closed = df.iloc[:-1]
         k, d = stochastic(closed)
         if k.iloc[-2:].isna().any() or d.iloc[-2:].isna().any():
@@ -130,7 +150,6 @@ for sym in SYMBOLS:
         k0, k1 = float(k.iloc[-2]), float(k.iloc[-1])
         d0, d1 = float(d.iloc[-2]), float(d.iloc[-1])
         cross_up = k0 <= d0 and k1 > d1
-        cross_dn = k0 >= d0 and k1 < d1
 
         if pos.get("status") == "NONE":
             if cross_up and min(k0, d0) < OVERSOLD:
@@ -140,23 +159,10 @@ for sym in SYMBOLS:
                      f"السهم: {sym}\n"
                      f"سعر الشراء: {price:.2f}\n"
                      f"الوقف: {stop_price:.2f} (-{STOP_PCT}%)\n"
+                     f"الهدف: وصول الاستوكاستيك لـ {SELL_LEVEL}\n"
                      f"Stoch %K: {k1:.1f} | %D: {d1:.1f}\n"
                      f"تقاطع صاعد في المنطقة الدنيا (تحت {OVERSOLD})")
                 pos = {"status": "OPEN", "entry": price}
-
-        elif pos.get("status") == "OPEN":
-            if cross_dn and max(k0, d0) > OVERBOUGHT:
-                entry = pos["entry"]
-                close_position(
-                    sym, entry, price, "stoch",
-                    f"🔴 بيع — وفقاً للاستوكاستيك\n"
-                    f"الفريم: 30 دقيقة\n"
-                    f"السهم: {sym}\n"
-                    f"سعر البيع: {price:.2f}\n"
-                    f"سعر الشراء: {entry:.2f}\n"
-                    f"Stoch %K: {k1:.1f} | %D: {d1:.1f}\n"
-                    f"تقاطع هابط في المنطقة العليا (فوق {OVERBOUGHT})")
-                pos = {"status": "NONE"}
 
         pos["last_bar"] = bar
         state[sym] = pos
