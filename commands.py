@@ -229,7 +229,7 @@ def build_open_report(tv, state, stoch_state):
                 result = (price - entry) / entry * 100
                 lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {result:+.2f}%")
             lines.append(f"الوقف: {stop:.2f} (-{STOCH_STOP_PCT}%)")
-            lines.append("البيع: عند تقاطع هابط في المنطقة العليا (فوق 80) أو عند الوقف")
+                        lines.append("البيع: عند وصول الاستوكاستيك لـ 80 أو عند الوقف")
             lines.append("")
     return "\n".join(lines)
 
