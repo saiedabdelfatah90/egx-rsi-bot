@@ -1,40 +1,27 @@
-import json
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import requests
 
+import excel_report as X
+
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
-FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
-
-
-def load_json(path, default):
-    if os.path.exists(path):
-        try:
-            with open(path, encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return default
-    return default
+CHAT_IDS = [c.strip() for c in os.environ["CHAT_ID"].split(",") if c.strip()]
+FRAME_ORDER = X.FRAME_ORDER
 
 
 def send(text):
-    requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                  data={"chat_id": CHAT_ID, "text": text}, timeout=20)
-
-
-def stats(items):
-    wins = [t["pnl"] for t in items if t["pnl"] > 0]
-    losses = [t["pnl"] for t in items if t["pnl"] <= 0]
-    total = len(items)
-    rate = (len(wins) / total * 100) if total else 0
-    return len(wins), len(losses), rate, sum(wins), sum(losses)
+    for chat in CHAT_IDS:
+        try:
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                          data={"chat_id": chat, "text": text}, timeout=20)
+        except Exception as e:
+            print("خطأ في الإرسال:", e)
 
 
 def block(title, items):
-    w, l, rate, sw, sl = stats(items)
+    w, l, rate, sw, sl = X.stats(items)
     lines = [f"━━ {title} ━━"]
     if not items:
         lines.append("لا توجد صفقات مغلقة")
@@ -48,14 +35,15 @@ def block(title, items):
 
 
 today = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d")
-all_trades = load_json("trades.json", [])
-trades = [t for t in all_trades if t.get("frame") in FRAME_ORDER]
-state = load_json("state.json", {})
+state = X.load_json("state.json", {})
+if not isinstance(state, dict):
+    state = {}
+trades = X.load_trades()
 todays = [t for t in trades if t.get("date") == today]
 
 parts = [f"📅 تقرير يوم {today}", ""]
 for fr in FRAME_ORDER:
-    parts.append(block(f"فريم {fr}", [t for t in todays if t["frame"] == fr]))
+    parts.append(block(f"فريم {fr}", [t for t in todays if t.get("frame") == fr]))
     parts.append("")
 parts.append(block("الإجمالي", todays))
 
@@ -70,3 +58,8 @@ parts.append("🔓 صفقات لسه مفتوحة:")
 parts += [f"{fr}: {n}" for fr, n in open_counts.items()]
 
 send("\n".join(parts))
+
+# ملف Excel
+path, title, n = X.make_report("today", trades, state)
+for chat in CHAT_IDS:
+    X.send_document(path, chat, f"📊 تقرير Excel — {title} ({n} صفقة)")
