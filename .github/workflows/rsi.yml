@@ -24,7 +24,7 @@ jobs:
 
       - name: Install
         run: |
-          pip install pandas requests
+          pip install pandas requests openpyxl
           pip install git+https://github.com/rongardF/tvdatafeed.git
 
       - name: Run bot
@@ -32,6 +32,12 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python bot.py
+
+      - name: Excel commands
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python excel_cmd.py
 
       - name: Run commands
         env:
