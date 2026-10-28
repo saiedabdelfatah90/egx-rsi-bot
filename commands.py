@@ -75,7 +75,9 @@ def set_menu():
         {"command": "closed", "description": "الصفقات المقفولة اليوم بالتفاصيل"},
         {"command": "closedweek", "description": "الصفقات المقفولة آخر 7 أيام"},
         {"command": "closedall", "description": "كل الصفقات المقفولة من الأول"},
-        {"command": "report", "description": "إحصائية اليوم حتى الآن"},
+        {"command": "report", "description": "إحصائية اليوم حتى الآن"},        {"command": "excel", "description": "تقرير Excel لصفقات اليوم"},
+        {"command": "excelweek", "description": "تقرير Excel لآخر 7 أيام"},
+        {"command": "excelall", "description": "تقرير Excel لكل الصفقات"},
         {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
