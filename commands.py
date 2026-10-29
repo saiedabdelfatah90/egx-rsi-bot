@@ -86,6 +86,9 @@ def set_menu():
     except Exception as e:
         print("setMyCommands:", e)
 
+        {"command": "excelrsi", "description": "تقرير RSI اليومي كملف Excel"},
+        {"command": "excelrsih", "description": "تقرير RSI للساعة كملف Excel"},
+        {"command": "excelrsim", "description": "تقرير RSI لـ15 دقيقة كملف Excel"},
 
 def tag(value):
     if value <= 25:
