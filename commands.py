@@ -438,6 +438,79 @@ def build_report3(tv, key):
     if missing:
         lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
     return "\n".join(lines)
+def _dist_key(r):
+    d200 = r[4]
+    return abs(d200) if d200 is not None else 10 ** 9
+
+
+def _mini(r):
+    sym, value, price, d50, d200 = r
+    return f"{LRM}🔹 {sym}  ·  {price:.2f}  |  RSI {value:.1f}"
+
+
+def build_report4(tv, key):
+    name, itv = FRAMES[key]
+    above, below, missing = [], [], []
+    for sym in SYMBOLS:
+        try:
+            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
+            if df is None or len(df) < 51:
+                missing.append(sym)
+                continue
+            close = df["close"]
+            value = float(rsi(close).iloc[-1])
+            price = float(close.iloc[-1])
+            sma50 = float(close.rolling(50).mean().iloc[-1])
+            d50 = (price / sma50 - 1) * 100
+            d200 = None
+            if len(close) >= 200:
+                sma200 = float(close.rolling(200).mean().iloc[-1])
+                d200 = (price / sma200 - 1) * 100
+            row = (sym, value, price, d50, d200)
+            (above if price >= sma50 else below).append(row)
+        except Exception:
+            missing.append(sym)
+
+    by_rsi = sorted(above + below, key=lambda x: x[1])
+    lowest = by_rsi[:5]
+    highest = by_rsi[::-1][:5]
+
+    above.sort(key=_dist_key)
+    below.sort(key=_dist_key)
+
+    now = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d  %H:%M")
+    bar = "━━━━━━━━━━━━━━━━"
+
+    lines = [f"📊 تقرير RSI — فريم {name}",
+             f"🕐 {now}",
+             "",
+             f"🟢 فوق المتوسط 50 · عدد الأسهم: {len(above)}",
+             f"🔴 تحت المتوسط 50 · عدد الأسهم: {len(below)}"]
+    if missing:
+        lines.append(f"⚪ بدون بيانات · عدد الأسهم: {len(missing)}")
+    lines += ["",
+              "MA50 و MA200 = المسافة بين السعر والمتوسط المتحرك",
+              "الترتيب داخل كل قسم: الأقرب لمتوسط 200 أولاً",
+              ""]
+
+    if by_rsi:
+        lines += [f"{bar}\n⭐ أبرز الأسهم\n{bar}", "",
+                  "\n".join(["⚠️ أقل 5 أسهم RSI"] + [_mini(r) for r in lowest]), "",
+                  "\n".join(["🔥 أعلى 5 أسهم RSI"] + [_mini(r) for r in highest]), ""]
+
+    def section(title, rows):
+        out = [f"{bar}\n{title}\n{bar}", ""]
+        if not rows:
+            out += ["لا يوجد", ""]
+        for r in rows:
+            out += [_stock_block(r), ""]
+        return out
+
+    lines += section("🟢 فوق المتوسط 50", above)
+    lines += section("🔴 تحت المتوسط 50", below)
+    if missing:
+        lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
+    return "\n".join(lines)
 # ---------- نقرا الأوامر الجديدة ----------
 state = load_dict(STATE_FILE)
 
