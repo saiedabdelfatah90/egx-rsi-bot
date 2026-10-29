@@ -359,6 +359,85 @@ def build_report2(tv, key):
         lines.append("")
         lines.append("⚪ بدون بيانات: " + ", ".join(missing))
     return "\n".join(lines)
+LRM = "\u200e"
+
+
+def _arrow(v):
+    if v is None:
+        return "—"
+    return f"{'▲' if v >= 0 else '▼'} {abs(v):.1f}%"
+
+
+def _stock_block(r):
+    sym, value, price, d50, d200 = r
+    return (f"{LRM}🔹 {sym}  ·  {price:.2f}\n"
+            f"{LRM}RSI {value:.1f}{tag(value)}  |  MA50 {_arrow(d50)}  |  MA200 {_arrow(d200)}")
+
+
+def send_blocks(text):
+    chunk = ""
+    for block in text.split("\n\n"):
+        if chunk and len(chunk) + len(block) + 2 > 3500:
+            send(chunk)
+            chunk = ""
+        chunk += block + "\n\n"
+    if chunk.strip():
+        send(chunk)
+
+
+def build_report3(tv, key):
+    name, itv = FRAMES[key]
+    above, below, missing = [], [], []
+    for sym in SYMBOLS:
+        try:
+            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
+            if df is None or len(df) < 51:
+                missing.append(sym)
+                continue
+            close = df["close"]
+            value = float(rsi(close).iloc[-1])
+            price = float(close.iloc[-1])
+            sma50 = float(close.rolling(50).mean().iloc[-1])
+            d50 = (price / sma50 - 1) * 100
+            d200 = None
+            if len(close) >= 200:
+                sma200 = float(close.rolling(200).mean().iloc[-1])
+                d200 = (price / sma200 - 1) * 100
+            row = (sym, value, price, d50, d200)
+            (above if price >= sma50 else below).append(row)
+        except Exception:
+            missing.append(sym)
+
+    above.sort(key=lambda x: x[1])
+    below.sort(key=lambda x: x[1])
+
+    now = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d  %H:%M")
+    bar = "━━━━━━━━━━━━━━━━"
+
+    lines = [f"📊 تقرير RSI — فريم {name}",
+             f"🕐 {now}",
+             "",
+             f"🟢 فوق المتوسط 50 · عدد الأسهم: {len(above)}",
+             f"🔴 تحت المتوسط 50 · عدد الأسهم: {len(below)}"]
+    if missing:
+        lines.append(f"⚪ بدون بيانات · عدد الأسهم: {len(missing)}")
+    lines += ["",
+              "MA50 و MA200 = المسافة بين السعر والمتوسط المتحرك",
+              ""]
+
+    def section(title, rows):
+        out = [f"{bar}\n{title}\n{bar}", ""]
+        if not rows:
+            out += ["لا يوجد", ""]
+        for r in rows:
+            out += [_stock_block(r), ""]
+        return out
+
+    lines += section("🟢 فوق المتوسط 50", above)
+    lines += section("🔴 تحت المتوسط 50", below)
+    if missing:
+        lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
+    return "\n".join(lines)
 # ---------- نقرا الأوامر الجديدة ----------
 state = load_dict(STATE_FILE)
 
