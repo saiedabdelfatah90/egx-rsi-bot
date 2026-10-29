@@ -506,7 +506,7 @@ for period in closed_wanted:
 if wanted or want_open:
     tv = TvDatafeed()
     for key in wanted:
-        send(build_report2(tv, key))
+                send_blocks(build_report3(tv, key))
     if want_open:
         send(build_open_report(tv, state))
 
