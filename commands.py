@@ -115,7 +115,9 @@ def build_help():
         "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 5 دقايق في ساعات الجلسة).\n"
         "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
     )
-
+        "/excelrsi — تقرير RSI اليومي كملف Excel\n"
+        "/excelrsih — تقرير RSI للساعة كملف Excel\n"
+        "/excelrsim — تقرير RSI لـ15 دقيقة كملف Excel\n"
 
 def build_report(tv, key):
     name, itv = FRAMES[key]
