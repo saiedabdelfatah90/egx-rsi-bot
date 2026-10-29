@@ -316,7 +316,49 @@ def build_closed(period):
         lines.append(f"... وفيه {len(items) - CLOSED_LIMIT} صفقة أقدم مش معروضة")
     return "\n".join(lines)
 
+def _fmt_row(r):
+    sym, value, price, d50, d200 = r
+    s200 = f"{d200:+.1f}%" if d200 is not None else "—"
+    return f"{sym}  {price:.2f} | RSI {value:.1f}{tag(value)} | م50 {d50:+.1f}% | م200 {s200}"
 
+
+def build_report2(tv, key):
+    name, itv = FRAMES[key]
+    above, below, missing = [], [], []
+    for sym in SYMBOLS:
+        try:
+            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
+            if df is None or len(df) < 51:
+                missing.append(sym)
+                continue
+            close = df["close"]
+            value = float(rsi(close).iloc[-1])
+            price = float(close.iloc[-1])
+            sma50 = float(close.rolling(50).mean().iloc[-1])
+            d50 = (price / sma50 - 1) * 100
+            d200 = None
+            if len(close) >= 200:
+                sma200 = float(close.rolling(200).mean().iloc[-1])
+                d200 = (price / sma200 - 1) * 100
+            row = (sym, value, price, d50, d200)
+            (above if price >= sma50 else below).append(row)
+        except Exception:
+            missing.append(sym)
+
+    above.sort(key=lambda x: x[1])
+    below.sort(key=lambda x: x[1])
+
+    lines = [f"📊 RSI - فريم {name}",
+             "م50 / م200 = بعد السعر عن المتوسط المتحرك 50 / 200", ""]
+    lines.append(f"🟢 فوق المتوسط 50 ({len(above)}):")
+    lines += [_fmt_row(r) for r in above] or ["لا يوجد"]
+    lines.append("")
+    lines.append(f"🔴 تحت المتوسط 50 ({len(below)}):")
+    lines += [_fmt_row(r) for r in below] or ["لا يوجد"]
+    if missing:
+        lines.append("")
+        lines.append("⚪ بدون بيانات: " + ", ".join(missing))
+    return "\n".join(lines)
 # ---------- نقرا الأوامر الجديدة ----------
 state = load_dict(STATE_FILE)
 
