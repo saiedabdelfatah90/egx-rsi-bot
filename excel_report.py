@@ -214,3 +214,141 @@ def send_document(path, chat_id, caption=""):
                 timeout=60)
     except Exception as e:
         print("خطأ في إرسال الملف:", e)
+def load_symbols(path="bot.py"):
+    import ast
+    with open(path, encoding="utf-8") as f:
+        for node in ast.parse(f.read()).body:
+            if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name) \
+                    and node.targets[0].id == "SYMBOLS":
+                return ast.literal_eval(node.value)
+    return []
+
+
+def _rsi(close, period=14):
+    delta = close.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    avg_loss = loss.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    return 100 - (100 / (1 + avg_gain / avg_loss))
+
+
+def compute_rsi_rows(tv, symbols, interval):
+    rows, missing = [], []
+    for sym in symbols:
+        try:
+            df = tv.get_hist(symbol=sym, exchange="EGX", interval=interval, n_bars=300)
+            if df is None or len(df) < 51:
+                missing.append(sym)
+                continue
+            close = df["close"]
+            value = float(_rsi(close).iloc[-1])
+            price = float(close.iloc[-1])
+            sma50 = float(close.rolling(50).mean().iloc[-1])
+            d50 = (price / sma50 - 1) * 100
+            sma200 = d200 = None
+            if len(close) >= 200:
+                sma200 = float(close.rolling(200).mean().iloc[-1])
+                d200 = (price / sma200 - 1) * 100
+            rows.append((sym, value, price, sma50, d50, sma200, d200))
+        except Exception:
+            missing.append(sym)
+    return rows, missing
+
+
+def _dist_key(r):
+    return abs(r[6]) if r[6] is not None else 10 ** 9
+
+
+def _rsi_sheet(wb, title, rows):
+    ws = wb.create_sheet(title)
+    ws.sheet_view.rightToLeft = True
+    headers = ["السهم", "السعر", "RSI", "المتوسط 50", "البعد عن م50",
+               "المتوسط 200", "البعد عن م200"]
+    _header(ws, 1, headers)
+    for i, r in enumerate(rows, start=2):
+        sym, value, price, sma50, d50, sma200, d200 = r
+        values = [sym, price, value, sma50, d50,
+                  sma200 if sma200 is not None else "—",
+                  d200 if d200 is not None else "—"]
+        for col, v in enumerate(values, start=1):
+            c = ws.cell(row=i, column=col, value=v)
+            c.border = BORDER
+            c.alignment = CENTER
+        ws.cell(row=i, column=2).number_format = "0.00"
+        ws.cell(row=i, column=3).number_format = "0.0"
+        ws.cell(row=i, column=4).number_format = "0.00"
+        ws.cell(row=i, column=6).number_format = "0.00"
+        rsi_cell = ws.cell(row=i, column=3)
+        if value <= 30:
+            rsi_cell.fill = GREEN
+        elif value >= 70:
+            rsi_cell.fill = RED
+        for col, d in ((5, d50), (7, d200)):
+            c = ws.cell(row=i, column=col)
+            if d is not None:
+                c.number_format = PCT_SIGNED
+                c.fill = GREEN if d >= 0 else RED
+    _widths(ws, [11, 11, 9, 13, 15, 13, 15])
+    ws.freeze_panes = "A2"
+    if rows:
+        ws.auto_filter.ref = f"A1:G{len(rows) + 1}"
+
+
+def make_rsi_report(rows, missing, frame_name, key):
+    wb = Workbook()
+    above = sorted([r for r in rows if r[2] >= r[3]], key=_dist_key)
+    below = sorted([r for r in rows if r[2] < r[3]], key=_dist_key)
+    by_rsi = sorted(rows, key=lambda r: r[1])
+
+    ws = wb.active
+    ws.title = "الملخص"
+    ws.sheet_view.rightToLeft = True
+    ws["A1"] = f"تقرير RSI — فريم {frame_name}"
+    ws["A1"].font = TITLE_FONT
+    ws["A2"] = "تم الإنشاء: " + datetime.now(CAIRO).strftime("%Y-%m-%d %H:%M")
+
+    _header(ws, 4, ["البند", "العدد"])
+    items = [("إجمالي الأسهم", len(rows)),
+             ("فوق المتوسط 50", len(above)),
+             ("تحت المتوسط 50", len(below)),
+             ("RSI ≤ 30 (تشبع بيعي)", sum(1 for r in rows if r[1] <= 30)),
+             ("RSI ≥ 70 (تشبع شرائي)", sum(1 for r in rows if r[1] >= 70)),
+             ("بدون بيانات", len(missing))]
+    r0 = 5
+    for k, v in items:
+        for col, val in ((1, k), (2, v)):
+            c = ws.cell(row=r0, column=col, value=val)
+            c.border = BORDER
+            c.alignment = CENTER
+        r0 += 1
+
+    def mini_table(start, title, subset):
+        ws.cell(row=start, column=1, value=title).font = Font(bold=True)
+        _header(ws, start + 1, ["السهم", "السعر", "RSI"])
+        row = start + 2
+        for r in subset:
+            for col, val in ((1, r[0]), (2, r[2]), (3, r[1])):
+                c = ws.cell(row=row, column=col, value=val)
+                c.border = BORDER
+                c.alignment = CENTER
+            ws.cell(row=row, column=2).number_format = "0.00"
+            ws.cell(row=row, column=3).number_format = "0.0"
+            row += 1
+        return row
+
+    nxt = mini_table(r0 + 1, "أقل 5 أسهم RSI", by_rsi[:5])
+    nxt = mini_table(nxt + 1, "أعلى 5 أسهم RSI", by_rsi[::-1][:5])
+
+    ws.cell(row=nxt + 1, column=1,
+            value="الألوان: RSI ≤ 30 أخضر، ≥ 70 أحمر. البعد عن المتوسط: أخضر لو السعر فوقه، أحمر لو تحته.")
+    if missing:
+        ws.cell(row=nxt + 2, column=1, value="بدون بيانات: " + ", ".join(missing))
+    _widths(ws, [26, 12, 10])
+
+    _rsi_sheet(wb, "فوق المتوسط 50", above)
+    _rsi_sheet(wb, "تحت المتوسط 50", below)
+
+    name = f"rsi_{key}_{datetime.now(CAIRO).strftime('%Y-%m-%d_%H%M')}.xlsx"
+    wb.save(name)
+    return name, len(rows)
