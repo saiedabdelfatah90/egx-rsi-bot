@@ -8,7 +8,7 @@ import requests
 from tvDatafeed import TvDatafeed, Interval
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
+CHAT_IDS = [c.strip() for c in os.environ["CHAT_ID"].split(",") if c.strip()]
 STATE_FILE = "state.json"
 TRADES_FILE = "trades.json"
 
@@ -41,6 +41,7 @@ REASONS = {
     "t1+stop": "هدف أول ثم وقف",
 }
 CLOSED_LIMIT = 60
+LRM = "\u200e"
 
 
 def rsi(close, period=14):
@@ -52,23 +53,40 @@ def rsi(close, period=14):
     return 100 - (100 / (1 + avg_gain / avg_loss))
 
 
-def send(text):
+def _post(text, chat_id):
+    try:
+        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+                      data={"chat_id": chat_id, "text": text}, timeout=20)
+    except Exception as e:
+        print("خطأ في الإرسال:", e)
+
+
+def send(text, chat_id):
     # تقسيم الرسائل الطويلة (حد تليجرام 4096 حرف)
     chunk = ""
     for line in text.split("\n"):
         if len(chunk) + len(line) + 1 > 3800:
-            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                          data={"chat_id": CHAT_ID, "text": chunk}, timeout=20)
+            _post(chunk, chat_id)
             chunk = ""
         chunk += line + "\n"
     if chunk.strip():
-        requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-                      data={"chat_id": CHAT_ID, "text": chunk}, timeout=20)
+        _post(chunk, chat_id)
+
+
+def send_blocks(text, chat_id):
+    # تقسيم بين الأسهم (على السطور الفاضية) مش في نص سهم
+    chunk = ""
+    for block in text.split("\n\n"):
+        if chunk and len(chunk) + len(block) + 2 > 3500:
+            send(chunk, chat_id)
+            chunk = ""
+        chunk += block + "\n\n"
+    if chunk.strip():
+        send(chunk, chat_id)
 
 
 def set_menu():
     cmds = [
-        
         {"command": "rsi", "description": "تقرير RSI للفريم اليومي"},
         {"command": "rsih", "description": "تقرير RSI لفريم الساعة"},
         {"command": "rsim", "description": "تقرير RSI لفريم 15 دقيقة"},
@@ -76,10 +94,15 @@ def set_menu():
         {"command": "closed", "description": "الصفقات المقفولة اليوم بالتفاصيل"},
         {"command": "closedweek", "description": "الصفقات المقفولة آخر 7 أيام"},
         {"command": "closedall", "description": "كل الصفقات المقفولة من الأول"},
-        {"command": "report", "description": "إحصائية اليوم حتى الآن"},        {"command": "excel", "description": "تقرير Excel لصفقات اليوم"},
+        {"command": "report", "description": "إحصائية اليوم حتى الآن"},
+        {"command": "excel", "description": "تقرير Excel لصفقات اليوم"},
         {"command": "excelweek", "description": "تقرير Excel لآخر 7 أيام"},
         {"command": "excelall", "description": "تقرير Excel لكل الصفقات"},
-        {"command": "flags", "description": "اكتشاف نماذج العلم والراية على الفريمات الصغيرة"},
+        {"command": "excelopen", "description": "Excel بالصفقات المفتوحة وأسعارها"},
+        {"command": "excelrsi", "description": "تقرير RSI اليومي كملف Excel"},
+        {"command": "excelrsih", "description": "تقرير RSI للساعة كملف Excel"},
+        {"command": "excelrsim", "description": "تقرير RSI لـ15 دقيقة كملف Excel"},
+        {"command": "flags", "description": "اكتشاف نماذج العلم والراية مع صور"},
         {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
@@ -88,9 +111,6 @@ def set_menu():
     except Exception as e:
         print("setMyCommands:", e)
 
-        {"command": "excelrsi", "description": "تقرير RSI اليومي كملف Excel"},
-        {"command": "excelrsih", "description": "تقرير RSI للساعة كملف Excel"},
-        {"command": "excelrsim", "description": "تقرير RSI لـ15 دقيقة كملف Excel"},
 
 def tag(value):
     if value <= 25:
@@ -103,7 +123,7 @@ def tag(value):
 def build_help():
     return (
         "📋 الاختصارات:\n\n"
-        "/rsi — تقرير RSI للفريم اليومي (فوق وتحت المتوسط 50)\n"
+        "/rsi — تقرير RSI للفريم اليومي\n"
         "/rsih — نفس التقرير على فريم الساعة\n"
         "/rsim — نفس التقرير على فريم 15 دقيقة\n"
         "/open — الصفقات المفتوحة\n"
@@ -123,12 +143,31 @@ def build_help():
         "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 5 دقايق في ساعات الجلسة).\n"
         "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
     )
-        "/excelrsi — تقرير RSI اليومي كملف Excel\n"
-        "/excelrsih — تقرير RSI للساعة كملف Excel\n"
-        "/excelrsim — تقرير RSI لـ15 دقيقة كملف Excel\n"
-        "/flags — اكتشاف نماذج العلم والراية (15 دقيقة وساعة) مع صور (أو /patterns)\n"
 
-def build_report(tv, key):
+
+def _arrow(v):
+    if v is None:
+        return "—"
+    return f"{'▲' if v >= 0 else '▼'} {abs(v):.1f}%"
+
+
+def _stock_block(r):
+    sym, value, price, d50, d200 = r
+    return (f"{LRM}🔹 {sym}  ·  {price:.2f}\n"
+            f"{LRM}RSI {value:.1f}{tag(value)}  |  MA50 {_arrow(d50)}  |  MA200 {_arrow(d200)}")
+
+
+def _dist_key(r):
+    d200 = r[4]
+    return abs(d200) if d200 is not None else 10 ** 9
+
+
+def _mini(r):
+    sym, value, price, d50, d200 = r
+    return f"{LRM}🔹 {sym}  ·  {price:.2f}  |  RSI {value:.1f}"
+
+
+def build_report4(tv, key):
     name, itv = FRAMES[key]
     above, below, missing = [], [], []
     for sym in SYMBOLS:
@@ -141,22 +180,55 @@ def build_report(tv, key):
             value = float(rsi(close).iloc[-1])
             price = float(close.iloc[-1])
             sma50 = float(close.rolling(50).mean().iloc[-1])
-            (above if price >= sma50 else below).append((sym, value))
+            d50 = (price / sma50 - 1) * 100
+            d200 = None
+            if len(close) >= 200:
+                sma200 = float(close.rolling(200).mean().iloc[-1])
+                d200 = (price / sma200 - 1) * 100
+            row = (sym, value, price, d50, d200)
+            (above if price >= sma50 else below).append(row)
         except Exception:
             missing.append(sym)
 
-    above.sort(key=lambda x: x[1])
-    below.sort(key=lambda x: x[1])
+    by_rsi = sorted(above + below, key=lambda x: x[1])
+    lowest = by_rsi[:5]
+    highest = by_rsi[::-1][:5]
 
-    lines = [f"📊 RSI - فريم {name}", ""]
-    lines.append(f"🟢 فوق المتوسط 50 ({len(above)}):")
-    lines += [f"{s}  {v:.1f}{tag(v)}" for s, v in above] or ["لا يوجد"]
-    lines.append("")
-    lines.append(f"🔴 تحت المتوسط 50 ({len(below)}):")
-    lines += [f"{s}  {v:.1f}{tag(v)}" for s, v in below] or ["لا يوجد"]
+    above.sort(key=_dist_key)
+    below.sort(key=_dist_key)
+
+    now = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d  %H:%M")
+    bar = "━━━━━━━━━━━━━━━━"
+
+    lines = [f"📊 تقرير RSI — فريم {name}",
+             f"🕐 {now}",
+             "",
+             f"🟢 فوق المتوسط 50 · عدد الأسهم: {len(above)}",
+             f"🔴 تحت المتوسط 50 · عدد الأسهم: {len(below)}"]
     if missing:
-        lines.append("")
-        lines.append("⚪ بدون بيانات: " + ", ".join(missing))
+        lines.append(f"⚪ بدون بيانات · عدد الأسهم: {len(missing)}")
+    lines += ["",
+              "MA50 و MA200 = المسافة بين السعر والمتوسط المتحرك",
+              "الترتيب داخل كل قسم: الأقرب لمتوسط 200 أولاً",
+              ""]
+
+    if by_rsi:
+        lines += [f"{bar}\n⭐ أبرز الأسهم\n{bar}", "",
+                  "\n".join(["⚠️ أقل 5 أسهم RSI"] + [_mini(r) for r in lowest]), "",
+                  "\n".join(["🔥 أعلى 5 أسهم RSI"] + [_mini(r) for r in highest]), ""]
+
+    def section(title, rows):
+        out = [f"{bar}\n{title}\n{bar}", ""]
+        if not rows:
+            out += ["لا يوجد", ""]
+        for r in rows:
+            out += [_stock_block(r), ""]
+        return out
+
+    lines += section("🟢 فوق المتوسط 50", above)
+    lines += section("🔴 تحت المتوسط 50", below)
+    if missing:
+        lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
     return "\n".join(lines)
 
 
@@ -330,202 +402,8 @@ def build_closed(period):
         lines.append(f"... وفيه {len(items) - CLOSED_LIMIT} صفقة أقدم مش معروضة")
     return "\n".join(lines)
 
-def _fmt_row(r):
-    sym, value, price, d50, d200 = r
-    s200 = f"{d200:+.1f}%" if d200 is not None else "—"
-    return f"{sym}  {price:.2f} | RSI {value:.1f}{tag(value)} | م50 {d50:+.1f}% | م200 {s200}"
 
-
-def build_report2(tv, key):
-    name, itv = FRAMES[key]
-    above, below, missing = [], [], []
-    for sym in SYMBOLS:
-        try:
-            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
-            if df is None or len(df) < 51:
-                missing.append(sym)
-                continue
-            close = df["close"]
-            value = float(rsi(close).iloc[-1])
-            price = float(close.iloc[-1])
-            sma50 = float(close.rolling(50).mean().iloc[-1])
-            d50 = (price / sma50 - 1) * 100
-            d200 = None
-            if len(close) >= 200:
-                sma200 = float(close.rolling(200).mean().iloc[-1])
-                d200 = (price / sma200 - 1) * 100
-            row = (sym, value, price, d50, d200)
-            (above if price >= sma50 else below).append(row)
-        except Exception:
-            missing.append(sym)
-
-    above.sort(key=lambda x: x[1])
-    below.sort(key=lambda x: x[1])
-
-    lines = [f"📊 RSI - فريم {name}",
-             "م50 / م200 = بعد السعر عن المتوسط المتحرك 50 / 200", ""]
-    lines.append(f"🟢 فوق المتوسط 50 ({len(above)}):")
-    lines += [_fmt_row(r) for r in above] or ["لا يوجد"]
-    lines.append("")
-    lines.append(f"🔴 تحت المتوسط 50 ({len(below)}):")
-    lines += [_fmt_row(r) for r in below] or ["لا يوجد"]
-    if missing:
-        lines.append("")
-        lines.append("⚪ بدون بيانات: " + ", ".join(missing))
-    return "\n".join(lines)
-LRM = "\u200e"
-
-
-def _arrow(v):
-    if v is None:
-        return "—"
-    return f"{'▲' if v >= 0 else '▼'} {abs(v):.1f}%"
-
-
-def _stock_block(r):
-    sym, value, price, d50, d200 = r
-    return (f"{LRM}🔹 {sym}  ·  {price:.2f}\n"
-            f"{LRM}RSI {value:.1f}{tag(value)}  |  MA50 {_arrow(d50)}  |  MA200 {_arrow(d200)}")
-
-
-def send_blocks(text):
-    chunk = ""
-    for block in text.split("\n\n"):
-        if chunk and len(chunk) + len(block) + 2 > 3500:
-            send(chunk)
-            chunk = ""
-        chunk += block + "\n\n"
-    if chunk.strip():
-        send(chunk)
-
-
-def build_report3(tv, key):
-    name, itv = FRAMES[key]
-    above, below, missing = [], [], []
-    for sym in SYMBOLS:
-        try:
-            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
-            if df is None or len(df) < 51:
-                missing.append(sym)
-                continue
-            close = df["close"]
-            value = float(rsi(close).iloc[-1])
-            price = float(close.iloc[-1])
-            sma50 = float(close.rolling(50).mean().iloc[-1])
-            d50 = (price / sma50 - 1) * 100
-            d200 = None
-            if len(close) >= 200:
-                sma200 = float(close.rolling(200).mean().iloc[-1])
-                d200 = (price / sma200 - 1) * 100
-            row = (sym, value, price, d50, d200)
-            (above if price >= sma50 else below).append(row)
-        except Exception:
-            missing.append(sym)
-
-    above.sort(key=lambda x: x[1])
-    below.sort(key=lambda x: x[1])
-
-    now = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d  %H:%M")
-    bar = "━━━━━━━━━━━━━━━━"
-
-    lines = [f"📊 تقرير RSI — فريم {name}",
-             f"🕐 {now}",
-             "",
-             f"🟢 فوق المتوسط 50 · عدد الأسهم: {len(above)}",
-             f"🔴 تحت المتوسط 50 · عدد الأسهم: {len(below)}"]
-    if missing:
-        lines.append(f"⚪ بدون بيانات · عدد الأسهم: {len(missing)}")
-    lines += ["",
-              "MA50 و MA200 = المسافة بين السعر والمتوسط المتحرك",
-              ""]
-
-    def section(title, rows):
-        out = [f"{bar}\n{title}\n{bar}", ""]
-        if not rows:
-            out += ["لا يوجد", ""]
-        for r in rows:
-            out += [_stock_block(r), ""]
-        return out
-
-    lines += section("🟢 فوق المتوسط 50", above)
-    lines += section("🔴 تحت المتوسط 50", below)
-    if missing:
-        lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
-    return "\n".join(lines)
-def _dist_key(r):
-    d200 = r[4]
-    return abs(d200) if d200 is not None else 10 ** 9
-
-
-def _mini(r):
-    sym, value, price, d50, d200 = r
-    return f"{LRM}🔹 {sym}  ·  {price:.2f}  |  RSI {value:.1f}"
-
-
-def build_report4(tv, key):
-    name, itv = FRAMES[key]
-    above, below, missing = [], [], []
-    for sym in SYMBOLS:
-        try:
-            df = tv.get_hist(symbol=sym, exchange="EGX", interval=itv, n_bars=300)
-            if df is None or len(df) < 51:
-                missing.append(sym)
-                continue
-            close = df["close"]
-            value = float(rsi(close).iloc[-1])
-            price = float(close.iloc[-1])
-            sma50 = float(close.rolling(50).mean().iloc[-1])
-            d50 = (price / sma50 - 1) * 100
-            d200 = None
-            if len(close) >= 200:
-                sma200 = float(close.rolling(200).mean().iloc[-1])
-                d200 = (price / sma200 - 1) * 100
-            row = (sym, value, price, d50, d200)
-            (above if price >= sma50 else below).append(row)
-        except Exception:
-            missing.append(sym)
-
-    by_rsi = sorted(above + below, key=lambda x: x[1])
-    lowest = by_rsi[:5]
-    highest = by_rsi[::-1][:5]
-
-    above.sort(key=_dist_key)
-    below.sort(key=_dist_key)
-
-    now = datetime.now(ZoneInfo("Africa/Cairo")).strftime("%Y-%m-%d  %H:%M")
-    bar = "━━━━━━━━━━━━━━━━"
-
-    lines = [f"📊 تقرير RSI — فريم {name}",
-             f"🕐 {now}",
-             "",
-             f"🟢 فوق المتوسط 50 · عدد الأسهم: {len(above)}",
-             f"🔴 تحت المتوسط 50 · عدد الأسهم: {len(below)}"]
-    if missing:
-        lines.append(f"⚪ بدون بيانات · عدد الأسهم: {len(missing)}")
-    lines += ["",
-              "MA50 و MA200 = المسافة بين السعر والمتوسط المتحرك",
-              "الترتيب داخل كل قسم: الأقرب لمتوسط 200 أولاً",
-              ""]
-
-    if by_rsi:
-        lines += [f"{bar}\n⭐ أبرز الأسهم\n{bar}", "",
-                  "\n".join(["⚠️ أقل 5 أسهم RSI"] + [_mini(r) for r in lowest]), "",
-                  "\n".join(["🔥 أعلى 5 أسهم RSI"] + [_mini(r) for r in highest]), ""]
-
-    def section(title, rows):
-        out = [f"{bar}\n{title}\n{bar}", ""]
-        if not rows:
-            out += ["لا يوجد", ""]
-        for r in rows:
-            out += [_stock_block(r), ""]
-        return out
-
-    lines += section("🟢 فوق المتوسط 50", above)
-    lines += section("🔴 تحت المتوسط 50", below)
-    if missing:
-        lines += [f"{bar}\n⚪ بدون بيانات\n{bar}", "", LRM + ", ".join(missing), ""]
-    return "\n".join(lines)
-# ---------- نقرا الأوامر الجديدة ----------
+# ---------- نقرا الأوامر الجديدة (من كل المحادثات المسموح لها) ----------
 state = load_dict(STATE_FILE)
 
 set_menu()
@@ -534,28 +412,30 @@ last = int(state.get("_last_update_id", 0))
 r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates",
                  params={"offset": last + 1, "timeout": 0}, timeout=20).json()
 
-wanted = []
-closed_wanted = []
-want_open = False
-want_help = False
-want_report = False
+requests_by_chat = {}
 
 
-def add_closed(period):
-    if period not in closed_wanted:
-        closed_wanted.append(period)
+def get_req(chat):
+    if chat not in requests_by_chat:
+        requests_by_chat[chat] = {"rsi": [], "closed": [], "open": False,
+                                  "help": False, "report": False}
+    return requests_by_chat[chat]
 
 
 for u in r.get("result", []):
     last = max(last, u["update_id"])
     msg = u.get("message")
-    if not msg or str(msg["chat"]["id"]) != str(CHAT_ID):
+    if not msg:
         continue
+    chat = str(msg["chat"]["id"])
+    if chat not in CHAT_IDS:
+        continue   # أي محادثة مش في القايمة بتتجاهل
     parts = msg.get("text", "").strip().split()
     if not parts:
         continue
     cmd = parts[0].split("@")[0].lower()
     arg = parts[1].lower() if len(parts) > 1 else ""
+    req = get_req(chat)
 
     if cmd in ("/rsi", "/rsih", "/rsim"):
         if cmd == "/rsih":
@@ -564,38 +444,44 @@ for u in r.get("result", []):
             key = "m"
         else:
             key = arg if arg in FRAMES else "d"
-        if key not in wanted:
-            wanted.append(key)
+        if key not in req["rsi"]:
+            req["rsi"].append(key)
     elif cmd in ("/open", "/trades"):
-        want_open = True
+        req["open"] = True
     elif cmd in ("/help", "/start"):
-        want_help = True
+        req["help"] = True
     elif cmd == "/report":
-        want_report = True
-    elif cmd == "/closed":
-        if arg in ("week", "w"):
-            add_closed("week")
-        elif arg in ("all", "a"):
-            add_closed("all")
+        req["report"] = True
+    elif cmd in ("/closed", "/closedweek", "/closedall"):
+        if cmd == "/closedweek" or (cmd == "/closed" and arg in ("week", "w")):
+            period = "week"
+        elif cmd == "/closedall" or (cmd == "/closed" and arg in ("all", "a")):
+            period = "all"
         else:
-            add_closed("today")
-    elif cmd == "/closedweek":
-        add_closed("week")
-    elif cmd == "/closedall":
-        add_closed("all")
+            period = "today"
+        if period not in req["closed"]:
+            req["closed"].append(period)
 
-if want_help:
-    send(build_help())
-if want_report:
-    send(build_today_report(state))
-for period in closed_wanted:
-    send(build_closed(period))
-if wanted or want_open:
-    tv = TvDatafeed()
-    for key in wanted:
-                send_blocks(build_report4(tv, key))
-    if want_open:
-        send(build_open_report(tv, state))
+need_tv = any(q["rsi"] or q["open"] for q in requests_by_chat.values())
+tv = TvDatafeed() if need_tv else None
+rsi_cache = {}
+open_cache = {}
+
+for chat, req in requests_by_chat.items():
+    if req["help"]:
+        send(build_help(), chat)
+    if req["report"]:
+        send(build_today_report(state), chat)
+    for period in req["closed"]:
+        send(build_closed(period), chat)
+    for key in req["rsi"]:
+        if key not in rsi_cache:
+            rsi_cache[key] = build_report4(tv, key)
+        send_blocks(rsi_cache[key], chat)
+    if req["open"]:
+        if "text" not in open_cache:
+            open_cache["text"] = build_open_report(tv, state)
+        send(open_cache["text"], chat)
 
 state["_last_update_id"] = last
 with open(STATE_FILE, "w") as f:
