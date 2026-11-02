@@ -67,6 +67,7 @@ def send(text):
 
 
 def set_menu():
+    cmds = [
         
         {"command": "rsi", "description": "تقرير RSI للفريم اليومي"},
         {"command": "rsih", "description": "تقرير RSI لفريم الساعة"},
@@ -79,7 +80,6 @@ def set_menu():
         {"command": "excelweek", "description": "تقرير Excel لآخر 7 أيام"},
         {"command": "excelall", "description": "تقرير Excel لكل الصفقات"},
         {"command": "flags", "description": "اكتشاف نماذج العلم والراية على الفريمات الصغيرة"},
-    cmds = [
         {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
