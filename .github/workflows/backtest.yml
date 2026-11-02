@@ -1,0 +1,47 @@
+name: Backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      buy_rsi:
+        description: "RSI الشراء الأول"
+        default: "20"
+      buy2_drop:
+        description: "الشراء التاني بعد نزول % من الأول"
+        default: "5"
+      stop_pct:
+        description: "وقف الخسارة % تحت الشراء الأول"
+        default: "7"
+      fee_pct:
+        description: "العمولة % لكل جانب (شراء أو بيع)"
+        default: "0.15"
+      frames:
+        description: "الفريمات: d يومي، h ساعة، m ربع ساعة"
+        default: "d,h,m"
+
+jobs:
+  backtest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: |
+          pip install pandas requests openpyxl
+          pip install git+https://github.com/rongardF/tvdatafeed.git
+
+      - name: Run backtest
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          BUY1_RSI: ${{ inputs.buy_rsi }}
+          BUY2_DROP: ${{ inputs.buy2_drop }}
+          STOP_PCT: ${{ inputs.stop_pct }}
+          FEE_PCT: ${{ inputs.fee_pct }}
+          FRAMES: ${{ inputs.frames }}
+        run: python backtest.py
