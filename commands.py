@@ -67,6 +67,7 @@ def send(text):
 
 
 def set_menu():
+        {"command": "flags", "description": "اكتشاف نماذج العلم والراية على الفريمات الصغيرة"},
     cmds = [
         {"command": "rsi", "description": "تقرير RSI للفريم اليومي"},
         {"command": "rsih", "description": "تقرير RSI لفريم الساعة"},
@@ -118,6 +119,7 @@ def build_help():
         "/excelrsi — تقرير RSI اليومي كملف Excel\n"
         "/excelrsih — تقرير RSI للساعة كملف Excel\n"
         "/excelrsim — تقرير RSI لـ15 دقيقة كملف Excel\n"
+        "/flags — اكتشاف نماذج العلم والراية (15 دقيقة وساعة) مع صور (أو /patterns)\n"
 
 def build_report(tv, key):
     name, itv = FRAMES[key]
