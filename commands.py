@@ -103,6 +103,7 @@ def set_menu():
         {"command": "excelrsih", "description": "تقرير RSI للساعة كملف Excel"},
         {"command": "excelrsim", "description": "تقرير RSI لـ15 دقيقة كملف Excel"},
         {"command": "flags", "description": "اكتشاف نماذج العلم والراية مع صور"},
+        {"command": "best", "description": "أفضل الأسهم للشراء (تصحيح فيبو)"},       
         {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
@@ -139,6 +140,7 @@ def build_help():
         "/excelrsih — تقرير RSI للساعة كملف Excel\n"
         "/excelrsim — تقرير RSI لـ15 دقيقة كملف Excel\n"
         "/flags — اكتشاف نماذج العلم والراية مع صور\n"
+        "/best — أفضل الأسهم للشراء (تصحيح فيبو وهامر وحجم)\n"
         "/help — القايمة دي\n\n"
         "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 5 دقايق في ساعات الجلسة).\n"
         "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
