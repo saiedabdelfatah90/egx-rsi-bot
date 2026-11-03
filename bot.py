@@ -58,6 +58,7 @@ def now_cairo():
 
 state = load_json(STATE_FILE, {})
 trades = load_json(TRADES_FILE, [])
+market_data = {}
 if not isinstance(state, dict):
     state = {}
 if not isinstance(trades, list):
@@ -183,6 +184,17 @@ for sym in SYMBOLS:
                          f"الهدف الثاني (+{t2p}%): {t2:.2f}")
 
             state[key] = pos
+            t1 = t2 = stop = None
+            if pos.get("status") in ("HALF", "FULL"):
+                t1, t2, stop = levels(pos, t1p, t2p)
+            market_data[key] = {
+                "symbol": sym, "frame": name, "rsi": round(value, 2),
+                "price": round(price, 4), "status": pos.get("status", "NONE"),
+                "avg": round(pos.get("avg", 0), 4) if pos.get("avg") is not None else None,
+                "t1": round(t1, 4) if t1 is not None else None,
+                "t2": round(t2, 4) if t2 is not None else None,
+                "stop": round(stop, 4) if stop is not None else None,
+            }
             print(sym, name, round(value, 1), pos["status"])
         except Exception as e:
             print(sym, name, "خطأ:", e)
@@ -191,3 +203,5 @@ with open(STATE_FILE, "w", encoding="utf-8") as f:
     json.dump(state, f)
 with open(TRADES_FILE, "w", encoding="utf-8") as f:
     json.dump(trades, f, ensure_ascii=False)
+with open("market_data.json", "w", encoding="utf-8") as f:
+    json.dump({"updated": now_cairo().isoformat(), "market": list(market_data.values())}, f, ensure_ascii=False)
