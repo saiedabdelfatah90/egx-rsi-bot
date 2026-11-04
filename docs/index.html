@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة EGX</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--text:#1b2430;--muted:#6b7686;--line:#e3e8ef;--green:#1b8a4b;--gbg:#e3f6ea;--red:#c23b3b;--rbg:#fbe7e7;--blue:#1f4e78}
+@media (prefers-color-scheme:dark){:root{--bg:#0f141b;--card:#18202b;--text:#e8edf3;--muted:#92a0b2;--line:#2a3544;--green:#4cc47d;--gbg:#17382a;--red:#ef7a7a;--rbg:#3b1f1f;--blue:#3d6fa3}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.5}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px 0}
+.top{display:flex;justify-content:space-between;align-items:center}
+h1{font-size:18px;margin:0}
+#refresh{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:8px;font-size:18px;padding:2px 10px;cursor:pointer}
+.sub{font-size:12px;color:var(--muted);margin:2px 0 8px}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+nav button,.seg button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+nav button.active,.seg button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+main{padding:12px 14px 40px;max-width:980px;margin:0 auto}
+h2{font-size:15px;margin:18px 0 8px}
+.badge{background:var(--line);border-radius:999px;padding:0 8px;font-size:12px;margin-inline-start:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{font-size:12px;background:var(--line);border-radius:999px;padding:1px 10px}
+.big{font-size:24px;font-weight:700;margin:4px 0}
+.pos{color:var(--green)}.neg{color:var(--red)}
+dl{margin:6px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px}
+dt{color:var(--muted)}dd{margin:0;text-align:end}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+select,input{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:14px}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.pos{background:var(--gbg)}td.neg{background:var(--rbg)}
+.empty{color:var(--muted);text-align:center;padding:30px 0}
+.warn{background:var(--rbg);color:var(--red);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:13px}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:0 14px 30px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1>📊 لوحة EGX</h1><button id="refresh" title="تحديث">⟳</button></div>
+  <div class="sub" id="updated">جاري التحميل…</div>
+  <nav id="tabs">
+    <button data-tab="open" class="active">المفتوحة</button>
+    <button data-tab="closed">المقفولة</button>
+    <button data-tab="stats">الإحصائيات</button>
+    <button data-tab="rsi">RSI</button>
+  </nav>
+</header>
+<main>
+  <div id="banner"></div>
+  <section id="open"><div id="openBody"></div></section>
+  <section id="closed" hidden>
+    <div class="tools">
+      <select id="cPeriod"><option value="today">النهاردة</option><option value="week">آخر 7 أيام</option><option value="all">الكل</option></select>
+      <select id="cFrame"><option value="all">كل الفريمات</option><option>15 دقيقة</option><option>ساعة</option><option>يومي</option></select>
+    </div>
+    <div id="closedBody"></div>
+  </section>
+  <section id="stats" hidden>
+    <div class="tools">
+      <select id="sPeriod"><option value="today">النهاردة</option><option value="week">آخر 7 أيام</option><option value="all" selected>الكل</option></select>
+    </div>
+    <div id="statsBody"></div>
+  </section>
+  <section id="rsi" hidden>
+    <div class="tools">
+      <div class="seg" id="rsiFrames">
+        <button data-f="15 دقيقة">15 دقيقة</button><button data-f="ساعة">ساعة</button><button data-f="يومي" class="active">يومي</button>
+      </div>
+      <input id="rsiSearch" placeholder="بحث عن سهم" dir="ltr">
+      <select id="rsiSort"><option value="asc">RSI الأقل أولاً</option><option value="desc">RSI الأعلى أولاً</option><option value="sym">أبجدي</option></select>
+    </div>
+    <div id="rsiBody"></div>
+  </section>
+</main>
+<footer>صفقات افتراضية يتابعها البوت، وليست توصية شراء أو بيع. القرار والمخاطرة على المستخدم.</footer>
+
+<script>
+const OWNER = "saiedabdelfatah90", REPO = "egx-rsi-bot", BRANCH = "main";
+const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
+const FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"];
+const TARGETS = {"15 دقيقة": [3, 6], "ساعة": [5, 10], "يومي": [5, 10]};
+const STOP_PCT = 7;
+const REASONS = {target: "هدف", "t1+t2": "هدفين", t2: "هدف ثاني", stop: "وقف خسارة", "t1+stop": "هدف أول ثم وقف"};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const n2 = v => (v == null || isNaN(v)) ? "—" : Number(v).toFixed(2);
+const sg = v => (v == null || isNaN(v)) ? "—" : (v > 0 ? "+" : "") + Number(v).toFixed(2) + "%";
+const L = v => `<span dir="ltr">${v}</span>`;
+const sum = a => a.reduce((s, t) => s + (t.pnl || 0), 0);
+const D = {state: {}, trades: [], market: [], failed: false};
+let rsiFrame = "يومي";
+
+async function getJson(paths) {
+  const t = Math.floor(Date.now() / 60000);
+  for (const p of paths) {
+    try {
+      const r = await fetch(RAW + p + "?t=" + t, {cache: "no-store"});
+      if (r.ok) return await r.json();
+    } catch (e) {}
+  }
+  return null;
+}
+
+function normMarket(m) {
+  if (!m) return [];
+  let arr;
+  if (Array.isArray(m)) arr = m;
+  else if (Array.isArray(m.data)) arr = m.data;
+  else if (Array.isArray(m.items)) arr = m.items;
+  else if (m.data && typeof m.data === "object") arr = Object.values(m.data);
+  else arr = Object.values(m);
+  return arr.filter(v => v && typeof v === "object" && v.symbol && v.frame);
+}
+
+function cairoDay(offsetDays) {
+  const d = new Date();
+  d.setDate(d.getDate() + (offsetDays || 0));
+  return d.toLocaleDateString("en-CA", {timeZone: "Africa/Cairo"});
+}
+
+function periodTrades(period) {
+  if (period === "today") { const t = cairoDay(0); return D.trades.filter(x => x.date === t); }
+  if (period === "week") { const s = cairoDay(-6); return D.trades.filter(x => (x.date || "") >= s); }
+  return D.trades.slice();
+}
+
+function openTrades() {
+  const mk = {};
+  D.market.forEach(m => { mk[m.symbol + "|" + m.frame] = m; });
+  const rows = [];
+  for (const [key, pos] of Object.entries(D.state)) {
+    if (!pos || typeof pos !== "object" || !["HALF", "FULL"].includes(pos.status) || !key.includes("|")) continue;
+    const [sym, fr] = key.split("|");
+    if (!TARGETS[fr]) continue;
+    const [t1p, t2p] = TARGETS[fr];
+    const avg = pos.avg, first = pos.first;
+    const t1done = !!pos.t1_done, realized = pos.realized || 0;
+    const price = mk[key] ? mk[key].price : null;
+    let result = null;
+    if (price != null) result = realized + (t1done ? 0.5 : 1) * (price - avg) / avg * 100;
+    rows.push({sym, fr, parts: pos.status === "FULL" ? 2 : 1, avg, first, t1done, price, result,
+      stop: first * (1 - STOP_PCT / 100), t1: avg * (1 + t1p / 100), t2: avg * (1 + t2p / 100), t1p, t2p});
+  }
+  return rows;
+}
+
+function renderOpen() {
+  const rows = openTrades();
+  const el = $("openBody");
+  if (!rows.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مفتوحة حالياً</p>'; return; }
+  let html = "";
+  for (const fr of FRAME_ORDER) {
+    const items = rows.filter(r => r.fr === fr).sort((a, b) => a.sym.localeCompare(b.sym));
+    if (!items.length) continue;
+    html += `<h2>فريم ${fr}<span class="badge">${items.length}</span></h2><div class="grid">`;
+    for (const r of items) {
+      const cls = r.result == null ? "" : (r.result >= 0 ? "pos" : "neg");
+      html += `<div class="card">
+        <div class="row"><b dir="ltr">${esc(r.sym)}</b><span class="pill">${r.parts === 2 ? "شراء جزءين" : "شراء جزء واحد"}</span></div>
+        ${r.result != null ? `<div class="big ${cls}" dir="ltr">${sg(r.result)}</div>` : ""}
+        <dl>
+          <dt>السعر الحالي</dt><dd>${r.price != null ? L(n2(r.price)) : "—"}</dd>
+          <dt>سعر الشراء الأول</dt><dd>${L(n2(r.first))}</dd>
+          <dt>متوسط الشراء</dt><dd>${L(n2(r.avg))}</dd>
+          <dt>البيع</dt><dd>${r.t1done ? "تم بيع نصف الكمية" : "لم يتم بيع شيء"}</dd>
+          <dt>الوقف</dt><dd>${L(n2(r.stop))}</dd>
+          <dt>الهدف الأول (+${r.t1p}%)</dt><dd>${L(n2(r.t1))}${r.t1done ? " ✅" : ""}</dd>
+          <dt>الهدف الثاني (+${r.t2p}%)</dt><dd>${L(n2(r.t2))}</dd>
+        </dl></div>`;
+    }
+    html += "</div>";
+  }
+  el.innerHTML = html;
+}
+
+function renderClosed() {
+  const frame = $("cFrame").value;
+  let items = periodTrades($("cPeriod").value).filter(t => frame === "all" || t.frame === frame);
+  items.sort((a, b) => ((b.date || "") + (b.time || "")).localeCompare((a.date || "") + (a.time || "")));
+  const el = $("closedBody");
+  if (!items.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مقفولة في الفترة دي</p>'; return; }
+  const shown = items.slice(0, 200);
+  let html = `<p class="sub">عدد الصفقات: ${items.length}${items.length > 200 ? " (معروض أحدث 200)" : ""}</p>
+    <div class="wrap"><table><thead><tr><th>التاريخ</th><th>السهم</th><th>الفريم</th><th>شراء</th><th>بيع</th><th>النتيجة</th><th>السبب</th></tr></thead><tbody>`;
+  for (const t of shown) {
+    html += `<tr><td>${L(esc(t.date || ""))} ${L(esc(t.time || ""))}</td><td><b dir="ltr">${esc(t.symbol)}</b></td><td>${esc(t.frame)}</td>
+      <td>${L(n2(t.entry))}</td><td>${L(n2(t.exit))}</td><td class="${t.pnl > 0 ? "pos" : "neg"}">${L(sg(t.pnl))}</td><td>${esc(REASONS[t.reason] || t.reason || "")}</td></tr>`;
+  }
+  el.innerHTML = html + "</tbody></table></div>";
+}
+
+function statsOf(items) {
+  const wins = items.filter(t => t.pnl > 0), losses = items.filter(t => t.pnl <= 0);
+  const sw = sum(wins), sl = sum(losses);
+  return {n: items.length, w: wins.length, l: losses.length, rate: items.length ? wins.length / items.length * 100 : 0,
+    sw, sl, net: sw + sl, pf: sl < 0 ? sw / -sl : (sw > 0 ? Infinity : 0)};
+}
+
+function renderStats() {
+  const items = periodTrades($("sPeriod").value);
+  const el = $("statsBody");
+  if (!items.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مقفولة في الفترة دي</p>'; return; }
+  const groups = FRAME_ORDER.map(f => [f, items.filter(t => t.frame === f)]).concat([["الإجمالي", items]]);
+  let html = `<div class="wrap"><table><thead><tr><th>الفريم</th><th>الصفقات</th><th>ناجحة</th><th>نسبة النجاح</th><th>مجموع الأرباح</th><th>خاسرة</th><th>مجموع الخسائر</th><th>الصافي</th><th>معامل الربح</th></tr></thead><tbody>`;
+  for (const [name, its] of groups) {
+    const s = statsOf(its);
+    html += `<tr><td><b>${name}</b></td><td>${s.n}</td><td>${s.w}</td><td>${L(s.rate.toFixed(1) + "%")}</td><td>${L(sg(s.sw))}</td><td>${s.l}</td><td>${L(sg(s.sl))}</td>
+      <td class="${s.n ? (s.net > 0 ? "pos" : "neg") : ""}">${L(sg(s.net))}</td><td>${s.pf === Infinity ? "∞" : s.pf.toFixed(2)}</td></tr>`;
+  }
+  html += "</tbody></table></div>";
+  const byDay = {};
+  items.forEach(t => { byDay[t.date] = (byDay[t.date] || 0) + (t.pnl || 0); });
+  const days = Object.keys(byDay).sort().reverse().slice(0, 14);
+  html += `<h2>صافي كل يوم (آخر 14 يوم)</h2><div class="wrap"><table><thead><tr><th>اليوم</th><th>صافي النسب</th></tr></thead><tbody>`;
+  for (const d of days) html += `<tr><td>${L(d)}</td><td class="${byDay[d] > 0 ? "pos" : "neg"}">${L(sg(byDay[d]))}</td></tr>`;
+  html += "</tbody></table></div><p class=\"sub\">الصافي هنا مجموع نسب الصفقات، وليس عائد محفظة حقيقي.</p>";
+  el.innerHTML = html;
+}
+
+function renderRsi() {
+  const el = $("rsiBody");
+  if (!D.market.length) {
+    el.innerHTML = '<p class="empty">بيانات RSI والأسعار غير متاحة. ملف market_data.json مش موجود في المستودع.</p>';
+    return;
+  }
+  const q = $("rsiSearch").value.trim().toUpperCase(), sort = $("rsiSort").value;
+  const rows = D.market.filter(m => m.frame === rsiFrame && (!q || String(m.symbol).toUpperCase().includes(q)));
+  if (sort === "asc") rows.sort((a, b) => a.rsi - b.rsi);
+  else if (sort === "desc") rows.sort((a, b) => b.rsi - a.rsi);
+  else rows.sort((a, b) => String(a.symbol).localeCompare(String(b.symbol)));
+  if (!rows.length) { el.innerHTML = '<p class="empty">لا توجد نتائج</p>'; return; }
+  let html = `<p class="sub">عدد الأسهم: ${rows.length}</p><div class="wrap"><table><thead><tr><th>السهم</th><th>السعر</th><th>RSI</th><th>الحالة</th></tr></thead><tbody>`;
+  for (const m of rows) {
+    const c = m.rsi <= 25 ? "pos" : (m.rsi >= 75 ? "neg" : "");
+    const st = m.status === "HALF" ? "شراء أول" : (m.status === "FULL" ? "شراء كامل" : "—");
+    html += `<tr><td><b dir="ltr">${esc(m.symbol)}</b></td><td>${L(n2(m.price))}</td><td class="${c}">${L(n2(m.rsi))}</td><td>${st}</td></tr>`;
+  }
+  el.innerHTML = html + "</tbody></table></div>";
+}
+
+function renderAll() {
+  $("banner").innerHTML = D.failed ? '<div class="warn">تعذر تحميل البيانات. تأكد من الاتصال، أو أن المستودع عام.</div>' : "";
+  renderOpen(); renderClosed(); renderStats(); renderRsi();
+}
+
+async function loadUpdated() {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/commits?path=state.json&per_page=1`);
+    const j = await r.json();
+    const d = new Date(j[0].commit.committer.date);
+    $("updated").textContent = "آخر تحديث للحالة: " + d.toLocaleString("ar-EG", {timeZone: "Africa/Cairo", dateStyle: "medium", timeStyle: "short"});
+  } catch (e) { $("updated").textContent = "آخر تحديث: غير متاح"; }
+}
+
+async function load() {
+  $("updated").textContent = "جاري التحميل…";
+  const [state, trades, market] = await Promise.all([
+    getJson(["state.json"]), getJson(["trades.json"]), getJson(["market_data.json", "docs/market_data.json"])]);
+  D.failed = !state && !trades;
+  D.state = state && typeof state === "object" ? state : {};
+  D.trades = Array.isArray(trades) ? trades.filter(t => FRAME_ORDER.includes(t.frame)) : [];
+  D.market = normMarket(market);
+  renderAll();
+  loadUpdated();
+}
+
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("active", x === b));
+  ["open", "closed", "stats", "rsi"].forEach(id => { $(id).hidden = id !== b.dataset.tab; });
+});
+$("rsiFrames").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  rsiFrame = b.dataset.f;
+  document.querySelectorAll("#rsiFrames button").forEach(x => x.classList.toggle("active", x === b));
+  renderRsi();
+});
+["cPeriod", "cFrame"].forEach(id => $(id).addEventListener("change", renderClosed));
+$("sPeriod").addEventListener("change", renderStats);
+$("rsiSearch").addEventListener("input", renderRsi);
+$("rsiSort").addEventListener("change", renderRsi);
+$("refresh").addEventListener("click", load);
+
+load();
+setInterval(load, 300000);
+</script>
+</body>
+</html>
