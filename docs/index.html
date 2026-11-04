@@ -114,6 +114,7 @@ function normMarket(m) {
   if (!m) return [];
   let arr;
   if (Array.isArray(m)) arr = m;
+  else if (Array.isArray(m.market)) arr = m.market;
   else if (Array.isArray(m.data)) arr = m.data;
   else if (Array.isArray(m.items)) arr = m.items;
   else if (m.data && typeof m.data === "object") arr = Object.values(m.data);
