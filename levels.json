@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T20:22:19.871Z",
+ "updated": "2026-11-13T20:33:25.083Z",
  "stocks": {
   "ABUK": {
    "price": 77.5,
@@ -18,6 +18,13 @@
    "m15": {
     "support": 77.2,
     "resistance": 78.5
+   }
+  },
+  "EGAL": {
+   "price": 325,
+   "daily": {
+    "support": 322,
+    "resistance": 332
    }
   }
  }
