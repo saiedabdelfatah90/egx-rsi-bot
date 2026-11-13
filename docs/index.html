@@ -59,7 +59,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:0 14px 30px}
   <section id="closed" hidden>
     <div class="tools">
       <select id="cPeriod"><option value="today">النهاردة</option><option value="week">آخر 7 أيام</option><option value="all">الكل</option></select>
-      <select id="cFrame"><option value="all">كل الفريمات</option><option>15 دقيقة</option><option>ساعة</option><option>يومي</option></select>
+      <select id="cFrame"><option value="all">كل الفريمات</option><option>15 دقيقة</option><option>ساعة</option><option>يومي</option><option>علم/راية 15 دقيقة</option><option>علم/راية ساعة</option><option>قاع صاعد</option><option>ابتلاعية</option><option>دعم/مقاومة</option><option>أفضل الأسهم</option></select>
     </div>
     <div id="closedBody"></div>
   </section>
@@ -86,9 +86,12 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:0 14px 30px}
 const OWNER = "saiedabdelfatah90", REPO = "egx-rsi-bot", BRANCH = "main";
 const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
 const FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"];
+// صفقات افتراضية لتنبيهات الاستراتيجيات (بتتتبع في vtrades.json)
+const VT_LABELS = ["علم/راية 15 دقيقة", "علم/راية ساعة", "قاع صاعد", "ابتلاعية", "دعم/مقاومة", "أفضل الأسهم"];
+const ALL_FRAMES = FRAME_ORDER.concat(VT_LABELS);
 const TARGETS = {"15 دقيقة": [3, 6], "ساعة": [5, 10], "يومي": [5, 10]};
 const STOP_PCT = 7;
-const REASONS = {target: "هدف", "t1+t2": "هدفين", t2: "هدف ثاني", stop: "وقف خسارة", "t1+stop": "هدف أول ثم وقف"};
+const REASONS = {target: "هدف", "t1+t2": "هدفين", t2: "هدف ثاني", stop: "وقف خسارة", "t1+stop": "هدف أول ثم وقف", timeout: "انتهاء المدة", stoch_stop: "وقف ستوكاستيك"};
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -96,7 +99,7 @@ const n2 = v => (v == null || isNaN(v)) ? "—" : Number(v).toFixed(2);
 const sg = v => (v == null || isNaN(v)) ? "—" : (v > 0 ? "+" : "") + Number(v).toFixed(2) + "%";
 const L = v => `<span dir="ltr">${v}</span>`;
 const sum = a => a.reduce((s, t) => s + (t.pnl || 0), 0);
-const D = {state: {}, trades: [], market: [], failed: false};
+const D = {state: {}, trades: [], market: [], vt: [], failed: false};
 let rsiFrame = "يومي";
 
 async function getJson(paths) {
@@ -157,7 +160,7 @@ function openTrades() {
 function renderOpen() {
   const rows = openTrades();
   const el = $("openBody");
-  if (!rows.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مفتوحة حالياً</p>'; return; }
+  if (!rows.length && !D.vt.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مفتوحة حالياً</p>'; return; }
   let html = "";
   for (const fr of FRAME_ORDER) {
     const items = rows.filter(r => r.fr === fr).sort((a, b) => a.sym.localeCompare(b.sym));
@@ -176,6 +179,31 @@ function renderOpen() {
           <dt>الوقف</dt><dd>${L(n2(r.stop))}</dd>
           <dt>الهدف الأول (+${r.t1p}%)</dt><dd>${L(n2(r.t1))}${r.t1done ? " ✅" : ""}</dd>
           <dt>الهدف الثاني (+${r.t2p}%)</dt><dd>${L(n2(r.t2))}</dd>
+        </dl></div>`;
+    }
+    html += "</div>";
+  }
+  // صفقات الاستراتيجيات المفتوحة
+  const mk = {};
+  D.market.forEach(m => { mk[m.symbol + "|" + m.frame] = m; });
+  for (const lb of VT_LABELS) {
+    const items = D.vt.filter(t => t.label === lb).sort((a, b) => a.sym.localeCompare(b.sym));
+    if (!items.length) continue;
+    html += `<h2>${esc(lb)}<span class="badge">${items.length}</span></h2><div class="grid">`;
+    for (const t of items) {
+      const m = mk[t.sym + "|" + t.tf];
+      const price = m ? m.price : null;
+      const result = price != null ? (price - t.entry) / t.entry * 100 : null;
+      const cls = result == null ? "" : (result >= 0 ? "pos" : "neg");
+      html += `<div class="card">
+        <div class="row"><b dir="ltr">${esc(t.sym)}</b><span class="pill">فريم ${esc(t.tf)}</span></div>
+        ${result != null ? `<div class="big ${cls}" dir="ltr">${sg(result)}</div>` : ""}
+        <dl>
+          <dt>السعر الحالي</dt><dd>${price != null ? L(n2(price)) : "—"}</dd>
+          <dt>سعر الدخول</dt><dd>${L(n2(t.entry))}</dd>
+          <dt>وقت الدخول</dt><dd>${L(esc(t.t || ""))}</dd>
+          <dt>الوقف (${sg((t.stop - t.entry) / t.entry * 100)})</dt><dd>${L(n2(t.stop))}</dd>
+          <dt>الهدف (${sg((t.target - t.entry) / t.entry * 100)})</dt><dd>${L(n2(t.target))}</dd>
         </dl></div>`;
     }
     html += "</div>";
@@ -210,7 +238,7 @@ function renderStats() {
   const items = periodTrades($("sPeriod").value);
   const el = $("statsBody");
   if (!items.length) { el.innerHTML = '<p class="empty">لا توجد صفقات مقفولة في الفترة دي</p>'; return; }
-  const groups = FRAME_ORDER.map(f => [f, items.filter(t => t.frame === f)]).concat([["الإجمالي", items]]);
+  const groups = ALL_FRAMES.map(f => [f, items.filter(t => t.frame === f)]).filter(g => g[1].length || FRAME_ORDER.includes(g[0])).concat([["الإجمالي", items]]);
   let html = `<div class="wrap"><table><thead><tr><th>الفريم</th><th>الصفقات</th><th>ناجحة</th><th>نسبة النجاح</th><th>مجموع الأرباح</th><th>خاسرة</th><th>مجموع الخسائر</th><th>الصافي</th><th>معامل الربح</th></tr></thead><tbody>`;
   for (const [name, its] of groups) {
     const s = statsOf(its);
@@ -264,11 +292,13 @@ async function loadUpdated() {
 
 async function load() {
   $("updated").textContent = "جاري التحميل…";
-  const [state, trades, market] = await Promise.all([
-    getJson(["state.json"]), getJson(["trades.json"]), getJson(["market_data.json", "docs/market_data.json"])]);
+  const [state, trades, market, vt] = await Promise.all([
+    getJson(["state.json"]), getJson(["trades.json"]), getJson(["market_data.json", "docs/market_data.json"]),
+    getJson(["vtrades.json"])]);
   D.failed = !state && !trades;
   D.state = state && typeof state === "object" ? state : {};
-  D.trades = Array.isArray(trades) ? trades.filter(t => FRAME_ORDER.includes(t.frame)) : [];
+  D.trades = Array.isArray(trades) ? trades.filter(t => ALL_FRAMES.includes(t.frame)) : [];
+  D.vt = vt && vt.open && typeof vt.open === "object" ? Object.values(vt.open) : [];
   D.market = normMarket(market);
   renderAll();
   loadUpdated();
