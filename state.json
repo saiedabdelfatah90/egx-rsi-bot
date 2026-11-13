@@ -1060,11 +1060,23 @@
  },
  "_best_date": "2026-11-12",
  "_levels": {
-  "seen": {},
-  "log": [],
+  "seen": {
+   "EGAL|daily|322|2026-11-13|daily": "2026-11-13"
+  },
+  "log": [
+   {
+    "t": "2026-11-13 22:36",
+    "sym": "EGAL",
+    "frame": "daily",
+    "support": 322.0,
+    "resistance": 332.0,
+    "close": 325.0
+   }
+  ],
   "done": {
    "ABUK|weekly": "2026-11-13",
-   "ABUK|daily": "2026-11-13"
+   "ABUK|daily": "2026-11-13",
+   "EGAL|daily": "2026-11-13"
   }
  }
 }
