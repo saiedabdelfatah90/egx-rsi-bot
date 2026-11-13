@@ -9,7 +9,15 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 CAIRO = ZoneInfo("Africa/Cairo")
-FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
+try:
+    import vtrades as VT
+    VT_LABELS = list(VT.LABELS)
+except Exception:
+    VT = None
+    VT_LABELS = []
+RSI_ORDER = ["15 دقيقة", "ساعة", "يومي"]
+# فريمات RSI + الصفقات الافتراضية لتنبيهات الاستراتيجيات
+FRAME_ORDER = RSI_ORDER + VT_LABELS
 
 # لازم تطابق إعدادات bot.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
@@ -21,6 +29,8 @@ REASONS = {
     "t2": "هدف ثاني",
     "stop": "وقف خسارة",
     "t1+stop": "هدف أول ثم وقف",
+    "timeout": "انتهاء المدة",
+    "stoch_stop": "وقف ستوكاستيك",
 }
 
 HEADER_FILL = PatternFill("solid", fgColor="1F4E78")
@@ -171,7 +181,7 @@ def _open_sheet(wb, state):
             continue
         sym, fr = key.split("|", 1)
         if fr in TARGETS:
-            rows.append((FRAME_ORDER.index(fr), sym, fr, pos))
+            rows.append((RSI_ORDER.index(fr), sym, fr, pos))
     rows.sort(key=lambda x: (x[0], x[1]))
 
     for i, (_, sym, fr, pos) in enumerate(rows, start=2):
@@ -193,12 +203,34 @@ def _open_sheet(wb, state):
     ws.freeze_panes = "A2"
 
 
+def _vt_open_sheet(wb):
+    ws = wb.create_sheet("صفقات الاستراتيجيات المفتوحة")
+    ws.sheet_view.rightToLeft = True
+    _header(ws, 1, ["السهم", "الاستراتيجية", "وقت الدخول", "سعر الدخول", "الوقف", "الهدف",
+                    "المخاطرة %", "العائد المتوقع %"])
+    items = VT.open_items() if VT else []
+    items.sort(key=lambda t: (t.get("label", ""), t.get("sym", "")))
+    for i, t in enumerate(items, start=2):
+        e, s, g = t["entry"], t["stop"], t["target"]
+        values = [t["sym"], t["label"], t.get("t", ""), e, s, g,
+                  round((e - s) / e * 100, 2), round((g - e) / e * 100, 2)]
+        for col, v in enumerate(values, start=1):
+            c = ws.cell(row=i, column=col, value=v)
+            c.border = BORDER
+            c.alignment = CENTER
+        for col in (4, 5, 6):
+            ws.cell(row=i, column=col).number_format = "0.00"
+    _widths(ws, [11, 18, 18, 13, 11, 11, 13, 16])
+    ws.freeze_panes = "A2"
+
+
 def make_report(period, trades, state):
     items, title = period_items(trades, period)
     wb = Workbook()
     _summary_sheet(wb, items, title)
     _trades_sheet(wb, items)
     _open_sheet(wb, state)
+    _vt_open_sheet(wb)
     name = f"report_{period}_{datetime.now(CAIRO).strftime('%Y-%m-%d')}.xlsx"
     wb.save(name)
     return name, title, len(items)

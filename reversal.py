@@ -416,6 +416,12 @@ if frames:
                 "entry_bar": res["entry_bar"], "entry_time": now.strftime("%Y-%m-%d %H:%M"),
                 "max_bars": CFG[name]["max_bars"], "e2": None}
             dirty = True
+            try:
+                import vtrades
+                vtrades.register("قاع صاعد", sym, name, res["entry"], res["stop"], res["target"],
+                                 f"{res['a_bar']}|{res['c_bar']}", res["entry_bar"])
+            except Exception as ex:
+                print("vtrades:", ex)
 
     if not found and manual_chats:
         send("📐 مفيش إشارات قاع صاعد صالحة دلوقتي.", targets)

@@ -324,6 +324,12 @@ for idx, (name, sym, key, res, df, sh) in enumerate(found):
         send(cap, targets)
     if not manual_chats:
         rec["seen"][key] = nowts
+        try:
+            import vtrades
+            e_, s_, t_ = engulf_levels(res)
+            vtrades.register("ابتلاعية", sym, name, e_, s_, t_, res["bar"], res["bar"])
+        except Exception as ex:
+            print("vtrades:", ex)
 
 if not found and manual_chats:
     send("🟢 مفيش شموع ابتلاعية صاعدة بعد تجميع دلوقتي.", targets)

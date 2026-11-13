@@ -80,6 +80,7 @@ def closed_closes(df, frame, now):
     if df is None or len(df) < 3:
         return None
     closes = [float(x) for x in df["close"].tolist()]
+    bars = [str(x) for x in df.index.tolist()]
     mins = now.hour * 60 + now.minute
     keep_last = False
     if frame == "daily":
@@ -89,7 +90,8 @@ def closed_closes(df, frame, now):
     # الساعة والربع ساعة: آخر شمعة دايماً بتتكون
     if not keep_last:
         closes = closes[:-1]
-    return closes if len(closes) >= 2 else None
+        bars = bars[:-1]
+    return (closes, bars[-1]) if len(closes) >= 2 else None
 
 
 def due(frame, now, state_meta):
@@ -122,6 +124,26 @@ def build_alert(sym, frame, sup, res, last):
     elif res:
         lines.append(f"⚠️ السعر عدّى مقاومة {name} ({fmt(res)}) بالفعل")
     return "\n".join(lines)
+
+
+TRACK_TF = {"weekly": "يومي", "daily": "يومي", "hourly": "ساعة", "m15": "15 دقيقة"}
+
+
+def register_trade(sym, frame, sup, res, last, last_bar, key):
+    """صفقة افتراضية: دخول = إغلاق الشمعة، وقف = 1% تحت الدعم، هدف = مقاومة الفريم."""
+    try:
+        import vtrades
+        if not res or res <= last:
+            return
+        bar = last_bar
+        if frame == "weekly":          # بنتابع الأسبوعي بالشموع اليومية بعد آخر يوم مقفول
+            d = fetch(sym, "daily")
+            if d is None or len(d) < 2:
+                return
+            bar = str(d.index[-1])
+        vtrades.register("دعم/مقاومة", sym, TRACK_TF[frame], last, sup * 0.99, res, key, bar)
+    except Exception as e:
+        print("vtrades:", e)
 
 
 def main():
@@ -157,11 +179,12 @@ def main():
             key_done = f"{sym}|{frame}"
             if not due(frame, now, {frame: meta.get(key_done)}):
                 continue
-            closes = closed_closes(fetch(sym, frame), frame, now)
+            cc = closed_closes(fetch(sym, frame), frame, now)
             if frame in ("daily", "weekly"):
                 meta[key_done] = today
-            if not closes:
+            if not cc:
                 continue
+            closes, last_bar = cc
             last, prev = closes[-1], closes[-2]
             if last > sup and prev <= sup:
                 bar = f"{today}|{len(closes)}|{fmt(last)}" if frame in ("hourly", "m15") else f"{today}|{frame}"
@@ -174,6 +197,7 @@ def main():
                 sent += 1
                 log.append({"t": now.strftime("%Y-%m-%d %H:%M"), "sym": sym, "frame": frame,
                             "support": sup, "resistance": res, "close": last})
+                register_trade(sym, frame, sup, res, last, last_bar, k)
     st["log"] = log[-60:]
     if len(seen) > 400:
         for k in list(seen)[:len(seen) - 400]:

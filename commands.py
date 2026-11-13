@@ -30,10 +30,13 @@ FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
 
 # صفقات العلم والراية (بتتسجل من patterns.py)
 FLAG_FRAMES = ["علم/راية 15 دقيقة", "علم/راية ساعة"]
-ALL_FRAMES = FRAME_ORDER + FLAG_FRAMES
+VT_ONLY = ["قاع صاعد", "ابتلاعية", "دعم/مقاومة", "أفضل الأسهم"]   # صفقات افتراضية من vtrack.py
+ALL_FRAMES = FRAME_ORDER + FLAG_FRAMES + VT_ONLY
 FLAG_TF = {"علم/راية 15 دقيقة": "15 دقيقة", "علم/راية ساعة": "ساعة"}
 SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي",
-               "علم/راية 15 دقيقة": "علم 15د", "علم/راية ساعة": "علم ساعة"}
+               "علم/راية 15 دقيقة": "علم 15د", "علم/راية ساعة": "علم ساعة",
+               "قاع صاعد": "قاع صاعد", "ابتلاعية": "ابتلاعية", "دعم/مقاومة": "دعم/مقاومة",
+               "أفضل الأسهم": "أفضل الأسهم"}
 
 # لازم تطابق إعدادات bot.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
@@ -48,6 +51,8 @@ REASONS = {
     "flag_target": "هدف النموذج",
     "flag_stop": "كسر الإبطال",
     "flag_timeout": "انتهاء المدة",
+    "timeout": "انتهاء المدة",
+    "stoch_stop": "وقف ستوكاستيك",
 }
 CLOSED_LIMIT = 60
 LRM = "\u200e"
@@ -276,7 +281,12 @@ def build_open_report(tv, state):
             by_frame[fr].append((sym, pos))
 
     flags_open = sorted(flag_open_items(state), key=lambda t: (t["tf"], t["sym"]))
-    total = sum(len(v) for v in by_frame.values()) + len(flags_open)
+    try:
+        import vtrades
+        vt_open = sorted(vtrades.open_items(), key=lambda t: (t.get("label", ""), t.get("sym", "")))
+    except Exception:
+        vt_open = []
+    total = sum(len(v) for v in by_frame.values()) + len(flags_open) + len(vt_open)
     if total == 0:
         return "🔓 لا توجد صفقات مفتوحة حالياً"
 
@@ -329,6 +339,22 @@ def build_open_report(tv, state):
                 lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {result:+.2f}%")
             lines.append(f"الوقف: {t['stop']:.2f} | الهدف: {t['target']:.2f}")
             lines.append("")
+
+    cur_label = None
+    for t in vt_open:
+        if t["label"] != cur_label:
+            cur_label = t["label"]
+            n = sum(1 for x in vt_open if x["label"] == cur_label)
+            lines.append(f"━━ {cur_label} ({n}) ━━")
+        price = current_price(tv, t["sym"], t["tf"]) if t["tf"] in NAME_TO_INTERVAL else None
+        lines.append(f"📌 {t['sym']} — فريم {t['tf']}")
+        lines.append(f"دخول: {t['entry']:.2f} | وقت الدخول: {t.get('t', '—')}")
+        if price is None:
+            lines.append("السعر الحالي: غير متاح")
+        else:
+            lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {(price - t['entry']) / t['entry'] * 100:+.2f}%")
+        lines.append(f"الوقف: {t['stop']:.2f} | الهدف: {t['target']:.2f}")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -398,6 +424,13 @@ def build_today_report(state):
         label = "علم/راية " + t["tf"]
         if label in open_counts:
             open_counts[label] += 1
+    try:
+        import vtrades
+        for t in vtrades.open_items():
+            if t.get("label") in open_counts:
+                open_counts[t["label"]] += 1
+    except Exception:
+        pass
     parts.append("")
     parts.append("🔓 صفقات لسه مفتوحة:")
     parts += [f"{fr}: {n}" for fr, n in open_counts.items()]

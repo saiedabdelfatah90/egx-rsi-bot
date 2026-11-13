@@ -312,6 +312,16 @@ for name in frames:
 found.sort(key=lambda x: x[2]["score"], reverse=True)
 print("نماذج:", len(found))
 
+if not manual_chats:                           # تسجيل صفقة افتراضية لكل تنبيه جديد
+    try:
+        import vtrades
+        for name, sym, res in found:
+            e_, s_, t_ = pattern_levels(res)
+            vtrades.register(f"علم/راية {name}", sym, name, e_, s_, t_,
+                             f"{res['kind']}|{res['status']}|{res['pole_time']}", res["df"].index[-1])
+    except Exception as ex:
+        print("vtrades:", ex)
+
 if found:
     for i, (name, sym, res) in enumerate(found[:MAX_CHARTS]):
         path = f"flag_{i}.png"

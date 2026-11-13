@@ -53,6 +53,13 @@ for key, pos in state.items():
         fr = key.split("|", 1)[-1]
         if fr in open_counts:
             open_counts[fr] += 1
+try:
+    import vtrades
+    for t in vtrades.open_items():
+        if t.get("label") in open_counts:
+            open_counts[t["label"]] += 1
+except Exception as e:
+    print("vtrades:", e)
 parts.append("")
 parts.append("🔓 صفقات لسه مفتوحة:")
 parts += [f"{fr}: {n}" for fr, n in open_counts.items()]

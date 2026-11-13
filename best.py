@@ -336,6 +336,15 @@ if B:
 lines += ["⚠️ فلتر آلي لترتيب المرشحين، مش توصية شراء. راجع الشارت بنفسك."]
 send_blocks("\n".join(lines), targets)
 
+if auto:                                       # صفقة افتراضية لكل سهم من اللي اتبعتلهم شارت
+    try:
+        import vtrades
+        for r in A[:MAX_CHARTS]:
+            e_, s_, t_ = best_levels(r)
+            vtrades.register("أفضل الأسهم", r["sym"], "يومي", e_, s_, t_, today, r["df"].index[-1])
+    except Exception as ex:
+        print("vtrades:", ex)
+
 for i, r in enumerate(A[:MAX_CHARTS]):
     path = f"best_{i}.png"
     try:
