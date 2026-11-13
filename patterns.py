@@ -157,6 +157,12 @@ def detect(df, min_pole, pole_max, flag_rng):
     }
 
 
+def pattern_levels(r):
+    """دخول = مستوى الكسر (أو السعر الحالي لو الكسر حصل)، وقف = الخط السفلي، هدف = الدخول + طول السارية."""
+    entry = r["price"] if r["status"] == "breakout" else r["u_last"]
+    return entry, r["l_last"], entry + r["pole_h"]
+
+
 def make_chart(r, sym, frame, path):
     try:
         import matplotlib
@@ -189,10 +195,16 @@ def make_chart(r, sym, frame, path):
     ax.plot([p_i + 1, n_i], [r["u0"], r["u_last"]], "--", color="#ef6c00", linewidth=1.5)
     ax.plot([p_i + 1, n_i], [r["l0"], r["l_last"]], "--", color="#ef6c00", linewidth=1.5)
 
+    try:
+        import posbox
+        e_, s_, t_ = pattern_levels(r)
+        posbox.draw_position(ax, n_i, n_i + 8, e_, s_, t_)
+    except Exception as ex:
+        print("posbox:", ex)
     name = "Bull Flag" if r["kind"] == "flag" else "Bull Pennant"
     st = "Breakout" if r["status"] == "breakout" else "Forming"
     ax.set_title(f"{sym} | {FRAME_EN.get(frame, frame)} | {name} | {st}")
-    ax.set_xlim(-1, n_i + 2)
+    ax.set_xlim(-1, n_i + 10)
     ax.grid(alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=110)
@@ -214,6 +226,13 @@ def make_caption(frame, sym, r):
              f"الإبطال تحت: {r['l_last']:.2f}"]
     if r["vr"] is not None:
         lines.append(f"حجم تداول النموذج ÷ السارية: {r['vr']:.2f} (أقل من 1 أفضل)")
+    try:
+        import posbox
+        pl = posbox.caption_line(*pattern_levels(r))
+        if pl:
+            lines.append(pl)
+    except Exception:
+        pass
     lines.append("⚠️ اكتشاف آلي تقريبي، راجع الشارت بنفسك")
     return "\n".join(lines)
 

@@ -180,6 +180,14 @@ def analyze(sym, dfd, dfh, last_daily_complete):
             "df": dfd}
 
 
+def best_levels(r):
+    """دخول = السعر الحالي، وقف = تحت فيبو 0.786 بنسبة 1% (أو 2% تحت السعر لو أقرب)، هدف = القمة السابقة."""
+    hi, lo = r["high"], r["low"]
+    f786 = hi - 0.786 * (hi - lo)
+    stop = min(f786 * 0.99, r["price"] * 0.98)
+    return r["price"], stop, hi
+
+
 def make_chart(r, path):
     try:
         import matplotlib
@@ -214,8 +222,14 @@ def make_chart(r, path):
         ax.hlines(y, hi_x, len(d) + 1, colors=colr, linestyles="--", linewidth=1)
         ax.text(len(d) + 1.2, y, f"{lvl}", va="center", fontsize=8)
     ax.axhline(r["price"], color="#6a1b9a", linestyle=":", linewidth=1)
+    try:
+        import posbox
+        e_, s_, t_ = best_levels(r)
+        posbox.draw_position(ax, len(d) - 0.5, len(d) + 4.5, e_, s_, t_)
+    except Exception as ex:
+        print("posbox:", ex)
     ax.set_title(f"{r['sym']} | Daily | Fib {r['retr'] * 100:.0f}% | Score {r['score']:.0f}")
-    ax.set_xlim(-1, len(d) + 4)
+    ax.set_xlim(-1, len(d) + 6)
     ax.grid(alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=110)
@@ -326,7 +340,15 @@ for i, r in enumerate(A[:MAX_CHARTS]):
     path = f"best_{i}.png"
     try:
         make_chart(r, path)
-        send_photo(path, f"{r['sym']} — شارت يومي بمستويات فيبو", targets)
+        cap = f"{r['sym']} — شارت يومي بمستويات فيبو"
+        try:
+            import posbox
+            pl = posbox.caption_line(*best_levels(r))
+            if pl:
+                cap += "\n" + pl + "\n(الوقف تحت فيبو 0.786، الهدف القمة السابقة)"
+        except Exception:
+            pass
+        send_photo(path, cap, targets)
     except Exception as e:
         print("خطأ في الرسم:", e)
 

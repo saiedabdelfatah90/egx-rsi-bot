@@ -135,6 +135,16 @@ def detect(closed, cfg, shift=0):
     return None
 
 
+def engulf_levels(r):
+    """دخول = إغلاق الابتلاعية، وقف = أدنى الابتلاعية، هدف تقديري = قاعدة التجميع مسقطة من قمتها
+    (وعلى الأقل 1.5 ضعف المخاطرة)."""
+    entry = r["c_i"]
+    stop = r["low_eng"]
+    rng = r["base_high"] - r["base_low"]
+    target = max(r["base_high"] + rng, entry + 1.5 * (entry - stop))
+    return entry, stop, target
+
+
 def make_chart(df, r, sym, frame, path):
     try:
         import matplotlib
@@ -167,8 +177,14 @@ def make_chart(df, r, sym, frame, path):
     ax.annotate("Bullish engulfing", xy=(i_x, H[i_x]), xytext=(i_x - 6, H[i_x] + (r["base_high"] - r["base_low"]) * 0.8),
                 arrowprops={"arrowstyle": "->"}, fontsize=9)
     ax.hlines(r["low_eng"], i_x, len(d) + 1, colors="#c62828", linestyles=":", linewidth=1.2)
+    try:
+        import posbox
+        e, s_, t_ = engulf_levels(r)
+        posbox.draw_position(ax, i_x + 0.5, i_x + 7, e, s_, t_)
+    except Exception as ex:
+        print("posbox:", ex)
     ax.set_title(f"{sym} | {FRAME_EN.get(frame, frame)} | Engulfing after base ({r['n']} bars)")
-    ax.set_xlim(-1, len(d) + 2)
+    ax.set_xlim(-1, len(d) + 7)
     ax.grid(alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=110)
@@ -187,6 +203,13 @@ def make_caption(frame, sym, r, note=""):
     lines.append(f"منطقة التجميع: {r['base_low']:.2f} – {r['base_high']:.2f}")
     lines.append("الإغلاق فوق التجميع ✅ (اختراق)" if r["breakout"] else "الإغلاق لسه جوه التجميع")
     lines.append(f"الإبطال تحت أدنى الابتلاعية: {r['low_eng']:.2f} (-{r['risk']:.1f}%)")
+    try:
+        import posbox
+        pl = posbox.caption_line(*engulf_levels(r))
+        if pl:
+            lines.append(pl + " (الهدف تقديري)")
+    except Exception:
+        pass
     lines.append("⚠️ اكتشاف آلي، راجع الشارت بنفسك")
     return "\n".join(lines)
 

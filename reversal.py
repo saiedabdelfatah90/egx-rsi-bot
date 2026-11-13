@@ -211,6 +211,11 @@ def make_chart(df, r, sym, frame, path):
                   linewidth=1.8 if ratio == 1.0 else 0.9)
         ax.text(end + 0.3, y, f"{ratio:g}", va="center", fontsize=8)
     ax.text(end + 0.3, r["stop"], "SL", va="center", fontsize=8, color="#c62828")
+    try:
+        import posbox
+        posbox.draw_position(ax, cx_i + 1, end, r["entry"], r["stop"], r["target"])
+    except Exception as e:
+        print("posbox:", e)
     ax.set_title(f"{sym} | {FRAME_EN.get(frame, frame)} | Higher-low reversal | RR {r['rr']:.1f}")
     ax.set_xlim(-1, end + 4)
     ax.grid(alpha=0.3)
