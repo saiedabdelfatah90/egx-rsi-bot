@@ -73,7 +73,7 @@ jobs:
         run: |
           git config user.name "rsi-bot"
           git config user.email "rsi-bot@users.noreply.github.com"
-          for f in state.json trades.json market_data.json docs/market_data.json; do
+          for f in state.json trades.json market_data.json.levels.json docs/market_data.json; do
             [ -f "$f" ] && git add "$f"
           done
           git diff --cached --quiet && exit 0
