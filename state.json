@@ -1,1 +1,1070 @@
-{"COMI|15 \u062f\u0642\u064a\u0642\u0629": "NONE", "COMI|\u0633\u0627\u0639\u0629": "NONE", "COMI|\u064a\u0648\u0645\u064a": "NONE", "TMGH|15 \u062f\u0642\u064a\u0642\u0629": "NONE", "TMGH|\u0633\u0627\u0639\u0629": "NONE", "TMGH|\u064a\u0648\u0645\u064a": "NONE", "EAST|15 \u062f\u0642\u064a\u0642\u0629": "NONE", "EAST|\u0633\u0627\u0639\u0629": "NONE", "EAST|\u064a\u0648\u0645\u064a": "NONE", "ETEL|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ETEL|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ETEL|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SWDY|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SWDY|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SWDY|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ABUK|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ABUK|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ABUK|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ORAS|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ORAS|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ORAS|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "FWRY|15 \u062f\u0642\u064a\u0642\u0629": "NONE", "FWRY|\u0633\u0627\u0639\u0629": "NONE", "FWRY|\u064a\u0648\u0645\u064a": "NONE", "SKPC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SKPC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SKPC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AMOC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AMOC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AMOC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EFID|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EFID|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EFID|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AJWA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AJWA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AJWA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "INFI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "INFI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "INFI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ISMA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ISMA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ISMA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MILS|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MILS|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MILS|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MOSC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MOSC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MOSC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MPCO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MPCO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MPCO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "NEDA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "NEDA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "NEDA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "UEFM|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "UEFM|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "UEFM|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ZEOT|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ZEOT|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ZEOT|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "GOUR|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "GOUR|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "GOUR|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CEFM|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CEFM|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CEFM|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AMES|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AMES|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AMES|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AXPH|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AXPH|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AXPH|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CPCI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CPCI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CPCI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SIPC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SIPC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SIPC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SPMD|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SPMD|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SPMD|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "NIPH|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "NIPH|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "NIPH|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ACAMD|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ACAMD|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ACAMD|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ATLC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ATLC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ATLC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "FIRE|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "FIRE|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "FIRE|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "BONY|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "BONY|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "BONY|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "APSW|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "APSW|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "APSW|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SPIN|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SPIN|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SPIN|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MCQE|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MCQE|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MCQE|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "PRCL|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "PRCL|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "PRCL|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ARCC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ARCC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ARCC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ETRS|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ETRS|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ETRS|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SAUD|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SAUD|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SAUD|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ADIB|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ADIB|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ADIB|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MTIE|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MTIE|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MTIE|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ICFC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ICFC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ICFC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "VERT|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "VERT|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "VERT|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SMFR|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SMFR|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SMFR|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AMII|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AMII|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AMII|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EEII|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EEII|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EEII|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "RUBX|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "RUBX|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "RUBX|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EGAL|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EGAL|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EGAL|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ALUM|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ALUM|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ALUM|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AALR|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AALR|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AALR|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EALR|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EALR|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EALR|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "IEEC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "IEEC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "IEEC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "INEG|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "INEG|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "INEG|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CAED|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CAED|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CAED|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MOED|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MOED|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MOED|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ROTO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ROTO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ROTO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EGAS|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EGAS|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EGAS|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AMIA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AMIA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AMIA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "KWIN|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "KWIN|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "KWIN|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "GGRN|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "GGRN|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "GGRN|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "_last_update_id": 195874082, "ATQA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ATQA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ATQA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "BIOC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "BIOC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "BIOC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "COSG|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "COSG|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "COSG|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CRST|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CRST|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CRST|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "IFAP|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "IFAP|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "IFAP|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MBSC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MBSC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MBSC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CIRA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CIRA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CIRA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CLHO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CLHO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CLHO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ISPH|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ISPH|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ISPH|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "JUFO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "JUFO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "JUFO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ORWE|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ORWE|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ORWE|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "RACC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "RACC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "RACC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "KABO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "KABO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "KABO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "KRDI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "KRDI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "KRDI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "LCSW|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "LCSW|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "LCSW|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "RMDA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "RMDA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "RMDA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SVCE|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SVCE|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SVCE|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "AIFI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "AIFI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "AIFI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "CERA|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "CERA|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "CERA|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MCRO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MCRO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MCRO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "OBRI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "OBRI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "OBRI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "OCPH|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "OCPH|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "OCPH|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "SCEM|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "SCEM|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "SCEM|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "TALM|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "TALM|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "TALM|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MBEG|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MBEG|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MBEG|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ACGC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ACGC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ACGC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "ADCI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "ADCI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "ADCI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "BIGP|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "BIGP|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "BIGP|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "DGTZ|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "DGTZ|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "DGTZ|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EFIC|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EFIC|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EFIC|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "EPCO|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "EPCO|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "EPCO|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "FNAR|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "FNAR|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "FNAR|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "LUTS|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "LUTS|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "LUTS|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "MPCI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "MPCI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "MPCI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "OLFI|15 \u062f\u0642\u064a\u0642\u0629": {"status": "NONE"}, "OLFI|\u0633\u0627\u0639\u0629": {"status": "NONE"}, "OLFI|\u064a\u0648\u0645\u064a": {"status": "NONE"}, "_buy_seq": {"date": "2026-10-27", "n": 1}, "_patterns": {"last": {"15 \u062f\u0642\u064a\u0642\u0629": 1794486680.4011989, "\u0633\u0627\u0639\u0629": 1794486680.4011989}, "alerted": {"15 \u062f\u0642\u064a\u0642\u0629|CRST|flag|forming|2026-11-09 08:15:00": 1794227581.61302, "15 \u062f\u0642\u064a\u0642\u0629|MOED|flag|forming|2026-11-09 08:30:00": 1794227581.61302, "15 \u062f\u0642\u064a\u0642\u0629|CAED|flag|forming|2026-11-09 08:15:00": 1794227581.61302, "15 \u062f\u0642\u064a\u0642\u0629|LCSW|flag|forming|2026-11-09 08:45:00": 1794227581.61302, "15 \u062f\u0642\u064a\u0642\u0629|SIPC|flag|forming|2026-11-09 10:00:00": 1794227581.61302, "\u0633\u0627\u0639\u0629|SKPC|flag|breakout|2026-11-05 12:00:00": 1794227581.61302, "\u0633\u0627\u0639\u0629|ZEOT|flag|forming|2026-11-08 11:00:00": 1794227581.61302, "\u0633\u0627\u0639\u0629|RACC|flag|forming|2026-11-08 10:00:00": 1794227581.61302, "\u0633\u0627\u0639\u0629|UEFM|flag|forming|2026-11-08 10:00:00": 1794227581.61302, "15 \u062f\u0642\u064a\u0642\u0629|PRCL|flag|breakout|2026-11-09 08:15:00": 1794298334.8750432, "15 \u062f\u0642\u064a\u0642\u0629|LCSW|flag|breakout|2026-11-09 08:45:00": 1794298334.8750432, "15 \u062f\u0642\u064a\u0642\u0629|MILS|pennant|forming|2026-11-09 10:30:00": 1794298334.8750432, "15 \u062f\u0642\u064a\u0642\u0629|SWDY|flag|forming|2026-11-09 08:15:00": 1794298334.8750432, "15 \u062f\u0642\u064a\u0642\u0629|BIOC|flag|forming|2026-11-09 11:00:00": 1794301568.9616098, "15 \u062f\u0642\u064a\u0642\u0629|EGAS|pennant|breakout|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|ARCC|flag|forming|2026-11-10 08:30:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|ATQA|flag|forming|2026-11-10 08:30:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|COSG|flag|forming|2026-11-10 08:15:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|SPMD|pennant|forming|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|ZEOT|flag|forming|2026-11-10 08:15:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|ORWE|flag|forming|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|RUBX|flag|forming|2026-11-10 08:30:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|SIPC|flag|forming|2026-11-09 10:15:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|SVCE|flag|forming|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|SCEM|flag|breakout|2026-11-10 08:15:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|SWDY|pennant|breakout|2026-11-10 08:30:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|TALM|flag|forming|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|DGTZ|flag|breakout|2026-11-10 08:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|VERT|flag|forming|2026-11-09 10:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|EGAS|flag|forming|2026-11-09 08:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|ARCC|flag|forming|2026-11-09 08:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|ISPH|flag|forming|2026-11-09 09:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|OBRI|flag|breakout|2026-11-09 08:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|SCEM|flag|forming|2026-11-09 08:00:00": 1794304829.836473, "\u0633\u0627\u0639\u0629|MBEG|flag|forming|2026-11-09 09:00:00": 1794304829.836473, "15 \u062f\u0642\u064a\u0642\u0629|ATQA|flag|forming|2026-11-10 09:15:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|IFAP|flag|forming|2026-11-10 08:45:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|MBSC|flag|forming|2026-11-10 08:00:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|CIRA|pennant|breakout|2026-11-10 08:45:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|EFID|flag|forming|2026-11-10 08:45:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|MCQE|flag|forming|2026-11-10 08:30:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|SPIN|flag|breakout|2026-11-10 08:00:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|ADCI|pennant|forming|2026-11-09 11:00:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|EPCO|flag|forming|2026-11-09 11:15:00": 1794308135.173785, "\u0633\u0627\u0639\u0629|CRST|flag|forming|2026-11-08 12:00:00": 1794308135.173785, "\u0633\u0627\u0639\u0629|IFAP|flag|forming|2026-11-08 08:00:00": 1794308135.173785, "\u0633\u0627\u0639\u0629|SIPC|flag|forming|2026-11-09 10:00:00": 1794308135.173785, "15 \u062f\u0642\u064a\u0642\u0629|EGAL|flag|forming|2026-11-10 09:30:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|IFAP|flag|breakout|2026-11-10 08:45:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|AJWA|flag|forming|2026-11-10 10:15:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|EFID|flag|breakout|2026-11-10 08:45:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|ISPH|flag|forming|2026-11-10 08:00:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|ALUM|flag|forming|2026-11-10 09:45:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|NIPH|flag|forming|2026-11-10 08:00:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|ACGC|flag|forming|2026-11-10 09:30:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|AMII|flag|forming|2026-11-10 08:00:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|DGTZ|flag|forming|2026-11-10 08:00:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|MPCI|flag|forming|2026-11-10 08:00:00": 1794311192.8630927, "15 \u062f\u0642\u064a\u0642\u0629|SPIN|flag|forming|2026-11-10 10:30:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|NIPH|flag|forming|2026-11-10 09:30:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|OCPH|flag|forming|2026-11-10 10:30:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|TALM|flag|forming|2026-11-10 08:30:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|AMII|flag|forming|2026-11-10 08:30:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|ROTO|flag|breakout|2026-11-10 09:15:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|ICFC|flag|forming|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|SPIN|flag|forming|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|INFI|pennant|breakout|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|RMDA|flag|forming|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|SVCE|flag|breakout|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|GOUR|flag|forming|2026-11-09 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|SMFR|flag|forming|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|TALM|flag|forming|2026-11-10 08:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|ADCI|pennant|forming|2026-11-09 11:00:00": 1794385073.6225545, "\u0633\u0627\u0639\u0629|VERT|flag|forming|2026-11-08 11:00:00": 1794385073.6225545, "15 \u062f\u0642\u064a\u0642\u0629|BIOC|flag|forming|2026-11-10 09:30:00": 1794388724.410857, "15 \u062f\u0642\u064a\u0642\u0629|EEII|flag|forming|2026-11-10 10:30:00": 1794388724.410857, "15 \u062f\u0642\u064a\u0642\u0629|EPCO|flag|forming|2026-11-10 11:15:00": 1794388724.410857, "\u0633\u0627\u0639\u0629|CLHO|flag|forming|2026-11-10 08:00:00": 1794388724.410857, "\u0633\u0627\u0639\u0629|INFI|pennant|forming|2026-11-10 08:00:00": 1794388724.410857, "\u0633\u0627\u0639\u0629|SVCE|flag|forming|2026-11-10 08:00:00": 1794388724.410857, "\u0633\u0627\u0639\u0629|VERT|pennant|forming|2026-11-08 12:00:00": 1794388724.410857, "15 \u062f\u0642\u064a\u0642\u0629|EFID|flag|forming|2026-11-10 12:00:00": 1794392606.844111, "15 \u062f\u0642\u064a\u0642\u0629|DGTZ|flag|breakout|2026-11-11 08:00:00": 1794392606.844111, "15 \u062f\u0642\u064a\u0642\u0629|FNAR|flag|forming|2026-11-11 08:00:00": 1794392606.844111, "\u0633\u0627\u0639\u0629|IFAP|flag|forming|2026-11-10 08:00:00": 1794392606.844111, "\u0633\u0627\u0639\u0629|ALUM|flag|forming|2026-11-10 09:00:00": 1794392606.844111, "\u0633\u0627\u0639\u0629|EFIC|flag|forming|2026-11-10 08:00:00": 1794392606.844111, "\u0633\u0627\u0639\u0629|VERT|flag|breakout|2026-11-09 08:00:00": 1794392606.844111, "15 \u062f\u0642\u064a\u0642\u0629|MTIE|flag|forming|2026-11-11 08:00:00": 1794396261.337809, "15 \u062f\u0642\u064a\u0642\u0629|AXPH|flag|forming|2026-11-11 08:00:00": 1794396261.337809, "15 \u062f\u0642\u064a\u0642\u0629|UEFM|pennant|forming|2026-11-11 09:15:00": 1794396261.337809, "15 \u062f\u0642\u064a\u0642\u0629|INEG|flag|forming|2026-11-11 08:00:00": 1794396261.337809, "\u0633\u0627\u0639\u0629|AJWA|flag|forming|2026-11-10 10:00:00": 1794396261.337809, "\u0633\u0627\u0639\u0629|INFI|flag|forming|2026-11-10 08:00:00": 1794396261.337809, "\u0633\u0627\u0639\u0629|GOUR|flag|forming|2026-11-10 08:00:00": 1794396261.337809, "\u0633\u0627\u0639\u0629|EPCO|flag|forming|2026-11-09 11:00:00": 1794396261.337809, "15 \u062f\u0642\u064a\u0642\u0629|EGAS|flag|forming|2026-11-11 10:45:00": 1794399812.8449655, "15 \u062f\u0642\u064a\u0642\u0629|AJWA|flag|breakout|2026-11-11 08:15:00": 1794399812.8449655, "\u0633\u0627\u0639\u0629|ISPH|flag|forming|2026-11-10 08:00:00": 1794399812.8449655, "15 \u062f\u0642\u064a\u0642\u0629|AJWA|flag|breakout|2026-11-11 08:30:00": 1794471589.0745704, "15 \u062f\u0642\u064a\u0642\u0629|EALR|flag|forming|2026-11-11 09:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|IFAP|flag|breakout|2026-11-10 08:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|JUFO|flag|forming|2026-11-11 08:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|ORWE|pennant|forming|2026-11-11 08:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|RACC|flag|forming|2026-11-11 08:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|ALUM|flag|breakout|2026-11-10 09:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|SIPC|flag|forming|2026-11-09 11:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|BIGP|flag|forming|2026-11-10 11:00:00": 1794471589.0745704, "\u0633\u0627\u0639\u0629|EEII|flag|forming|2026-11-10 10:00:00": 1794471589.0745704, "15 \u062f\u0642\u064a\u0642\u0629|MPCI|flag|forming|2026-11-11 12:00:00": 1794475466.0214732, "\u0633\u0627\u0639\u0629|AJWA|flag|breakout|2026-11-10 10:00:00": 1794475466.0214732, "\u0633\u0627\u0639\u0629|AIFI|flag|forming|2026-11-11 09:00:00": 1794475466.0214732, "15 \u062f\u0642\u064a\u0642\u0629|BIOC|flag|forming|2026-11-12 08:00:00": 1794479417.1635997, "15 \u062f\u0642\u064a\u0642\u0629|ZEOT|flag|forming|2026-11-11 10:30:00": 1794479417.1635997, "15 \u062f\u0642\u064a\u0642\u0629|AMES|flag|forming|2026-11-12 08:00:00": 1794479417.1635997, "15 \u062f\u0642\u064a\u0642\u0629|CAED|flag|forming|2026-11-12 08:00:00": 1794479417.1635997, "15 \u062f\u0642\u064a\u0642\u0629|DGTZ|flag|forming|2026-11-12 08:00:00": 1794479417.1635997, "\u0633\u0627\u0639\u0629|AMES|flag|forming|2026-11-11 09:00:00": 1794479417.1635997, "\u0633\u0627\u0639\u0629|MOSC|pennant|forming|2026-11-11 09:00:00": 1794479417.1635997, "15 \u062f\u0642\u064a\u0642\u0629|CRST|flag|forming|2026-11-12 09:45:00": 1794483072.341384, "15 \u062f\u0642\u064a\u0642\u0629|ZEOT|flag|forming|2026-11-12 08:00:00": 1794483072.341384, "15 \u062f\u0642\u064a\u0642\u0629|MOSC|flag|forming|2026-11-12 08:00:00": 1794483072.341384, "15 \u062f\u0642\u064a\u0642\u0629|NIPH|flag|forming|2026-11-12 10:00:00": 1794483072.341384, "\u0633\u0627\u0639\u0629|TALM|flag|forming|2026-11-10 09:00:00": 1794483072.341384, "\u0633\u0627\u0639\u0629|AMII|flag|forming|2026-11-11 08:00:00": 1794483072.341384, "\u0633\u0627\u0639\u0629|EFIC|flag|forming|2026-11-10 12:00:00": 1794483072.341384, "\u0633\u0627\u0639\u0629|ROTO|pennant|forming|2026-11-11 08:00:00": 1794483072.341384, "15 \u062f\u0642\u064a\u0642\u0629|EGAS|flag|forming|2026-11-12 09:45:00": 1794486680.4011989, "15 \u062f\u0642\u064a\u0642\u0629|BIOC|flag|forming|2026-11-12 10:00:00": 1794486680.4011989, "15 \u062f\u0642\u064a\u0642\u0629|IEEC|flag|forming|2026-11-12 08:00:00": 1794486680.4011989, "\u0633\u0627\u0639\u0629|ALUM|flag|forming|2026-11-10 10:00:00": 1794486680.4011989, "\u0633\u0627\u0639\u0629|MOSC|flag|forming|2026-11-11 09:00:00": 1794486680.4011989, "\u0633\u0627\u0639\u0629|AIFI|flag|breakout|2026-11-11 09:00:00": 1794486680.4011989}}, "_ma200": {"date": "2026-11-12", "checked": ["AALR", "ACGC", "ADCI", "AIFI", "AJWA", "ALUM", "AMES", "AMII", "AMOC", "APSW", "ARCC", "ATQA", "AXPH", "BIGP", "BIOC", "BONY", "CAED", "CERA", "CIRA", "CLHO", "COSG", "CPCI", "CRST", "DGTZ", "EALR", "EEII", "EFIC", "EFID", "EGAL", "EPCO", "ETEL", "ETRS", "FNAR", "GGRN", "GOUR", "ICFC", "IEEC", "IFAP", "INEG", "ISMA", "ISPH", "JUFO", "KRDI", "LCSW", "LUTS", "MBEG", "MBSC", "MCQE", "MCRO", "MILS", "MOED", "MPCI", "MPCO", "MTIE", "NIPH", "OBRI", "OCPH", "OLFI", "ORAS", "ORWE", "PRCL", "RACC", "RMDA", "ROTO", "RUBX", "SCEM", "SIPC", "SKPC", "SMFR", "SPIN", "SPMD", "SVCE", "SWDY", "TALM", "UEFM", "VERT", "ZEOT"]}, "_best_date": "2026-11-12"}
+{
+ "COMI|15 دقيقة": "NONE",
+ "COMI|ساعة": "NONE",
+ "COMI|يومي": "NONE",
+ "TMGH|15 دقيقة": "NONE",
+ "TMGH|ساعة": "NONE",
+ "TMGH|يومي": "NONE",
+ "EAST|15 دقيقة": "NONE",
+ "EAST|ساعة": "NONE",
+ "EAST|يومي": "NONE",
+ "ETEL|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ETEL|ساعة": {
+  "status": "NONE"
+ },
+ "ETEL|يومي": {
+  "status": "NONE"
+ },
+ "SWDY|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SWDY|ساعة": {
+  "status": "NONE"
+ },
+ "SWDY|يومي": {
+  "status": "NONE"
+ },
+ "ABUK|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ABUK|ساعة": {
+  "status": "NONE"
+ },
+ "ABUK|يومي": {
+  "status": "NONE"
+ },
+ "ORAS|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ORAS|ساعة": {
+  "status": "NONE"
+ },
+ "ORAS|يومي": {
+  "status": "NONE"
+ },
+ "FWRY|15 دقيقة": "NONE",
+ "FWRY|ساعة": "NONE",
+ "FWRY|يومي": "NONE",
+ "SKPC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SKPC|ساعة": {
+  "status": "NONE"
+ },
+ "SKPC|يومي": {
+  "status": "NONE"
+ },
+ "AMOC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AMOC|ساعة": {
+  "status": "NONE"
+ },
+ "AMOC|يومي": {
+  "status": "NONE"
+ },
+ "EFID|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EFID|ساعة": {
+  "status": "NONE"
+ },
+ "EFID|يومي": {
+  "status": "NONE"
+ },
+ "AJWA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AJWA|ساعة": {
+  "status": "NONE"
+ },
+ "AJWA|يومي": {
+  "status": "NONE"
+ },
+ "INFI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "INFI|ساعة": {
+  "status": "NONE"
+ },
+ "INFI|يومي": {
+  "status": "NONE"
+ },
+ "ISMA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ISMA|ساعة": {
+  "status": "NONE"
+ },
+ "ISMA|يومي": {
+  "status": "NONE"
+ },
+ "MILS|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MILS|ساعة": {
+  "status": "NONE"
+ },
+ "MILS|يومي": {
+  "status": "NONE"
+ },
+ "MOSC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MOSC|ساعة": {
+  "status": "NONE"
+ },
+ "MOSC|يومي": {
+  "status": "NONE"
+ },
+ "MPCO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MPCO|ساعة": {
+  "status": "NONE"
+ },
+ "MPCO|يومي": {
+  "status": "NONE"
+ },
+ "NEDA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "NEDA|ساعة": {
+  "status": "NONE"
+ },
+ "NEDA|يومي": {
+  "status": "NONE"
+ },
+ "UEFM|15 دقيقة": {
+  "status": "NONE"
+ },
+ "UEFM|ساعة": {
+  "status": "NONE"
+ },
+ "UEFM|يومي": {
+  "status": "NONE"
+ },
+ "ZEOT|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ZEOT|ساعة": {
+  "status": "NONE"
+ },
+ "ZEOT|يومي": {
+  "status": "NONE"
+ },
+ "GOUR|15 دقيقة": {
+  "status": "NONE"
+ },
+ "GOUR|ساعة": {
+  "status": "NONE"
+ },
+ "GOUR|يومي": {
+  "status": "NONE"
+ },
+ "CEFM|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CEFM|ساعة": {
+  "status": "NONE"
+ },
+ "CEFM|يومي": {
+  "status": "NONE"
+ },
+ "AMES|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AMES|ساعة": {
+  "status": "NONE"
+ },
+ "AMES|يومي": {
+  "status": "NONE"
+ },
+ "AXPH|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AXPH|ساعة": {
+  "status": "NONE"
+ },
+ "AXPH|يومي": {
+  "status": "NONE"
+ },
+ "CPCI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CPCI|ساعة": {
+  "status": "NONE"
+ },
+ "CPCI|يومي": {
+  "status": "NONE"
+ },
+ "SIPC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SIPC|ساعة": {
+  "status": "NONE"
+ },
+ "SIPC|يومي": {
+  "status": "NONE"
+ },
+ "SPMD|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SPMD|ساعة": {
+  "status": "NONE"
+ },
+ "SPMD|يومي": {
+  "status": "NONE"
+ },
+ "NIPH|15 دقيقة": {
+  "status": "NONE"
+ },
+ "NIPH|ساعة": {
+  "status": "NONE"
+ },
+ "NIPH|يومي": {
+  "status": "NONE"
+ },
+ "ACAMD|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ACAMD|ساعة": {
+  "status": "NONE"
+ },
+ "ACAMD|يومي": {
+  "status": "NONE"
+ },
+ "ATLC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ATLC|ساعة": {
+  "status": "NONE"
+ },
+ "ATLC|يومي": {
+  "status": "NONE"
+ },
+ "FIRE|15 دقيقة": {
+  "status": "NONE"
+ },
+ "FIRE|ساعة": {
+  "status": "NONE"
+ },
+ "FIRE|يومي": {
+  "status": "NONE"
+ },
+ "BONY|15 دقيقة": {
+  "status": "NONE"
+ },
+ "BONY|ساعة": {
+  "status": "NONE"
+ },
+ "BONY|يومي": {
+  "status": "NONE"
+ },
+ "APSW|15 دقيقة": {
+  "status": "NONE"
+ },
+ "APSW|ساعة": {
+  "status": "NONE"
+ },
+ "APSW|يومي": {
+  "status": "NONE"
+ },
+ "SPIN|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SPIN|ساعة": {
+  "status": "NONE"
+ },
+ "SPIN|يومي": {
+  "status": "NONE"
+ },
+ "MCQE|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MCQE|ساعة": {
+  "status": "NONE"
+ },
+ "MCQE|يومي": {
+  "status": "NONE"
+ },
+ "PRCL|15 دقيقة": {
+  "status": "NONE"
+ },
+ "PRCL|ساعة": {
+  "status": "NONE"
+ },
+ "PRCL|يومي": {
+  "status": "NONE"
+ },
+ "ARCC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ARCC|ساعة": {
+  "status": "NONE"
+ },
+ "ARCC|يومي": {
+  "status": "NONE"
+ },
+ "ETRS|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ETRS|ساعة": {
+  "status": "NONE"
+ },
+ "ETRS|يومي": {
+  "status": "NONE"
+ },
+ "SAUD|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SAUD|ساعة": {
+  "status": "NONE"
+ },
+ "SAUD|يومي": {
+  "status": "NONE"
+ },
+ "ADIB|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ADIB|ساعة": {
+  "status": "NONE"
+ },
+ "ADIB|يومي": {
+  "status": "NONE"
+ },
+ "MTIE|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MTIE|ساعة": {
+  "status": "NONE"
+ },
+ "MTIE|يومي": {
+  "status": "NONE"
+ },
+ "ICFC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ICFC|ساعة": {
+  "status": "NONE"
+ },
+ "ICFC|يومي": {
+  "status": "NONE"
+ },
+ "VERT|15 دقيقة": {
+  "status": "NONE"
+ },
+ "VERT|ساعة": {
+  "status": "NONE"
+ },
+ "VERT|يومي": {
+  "status": "NONE"
+ },
+ "SMFR|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SMFR|ساعة": {
+  "status": "NONE"
+ },
+ "SMFR|يومي": {
+  "status": "NONE"
+ },
+ "AMII|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AMII|ساعة": {
+  "status": "NONE"
+ },
+ "AMII|يومي": {
+  "status": "NONE"
+ },
+ "EEII|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EEII|ساعة": {
+  "status": "NONE"
+ },
+ "EEII|يومي": {
+  "status": "NONE"
+ },
+ "RUBX|15 دقيقة": {
+  "status": "NONE"
+ },
+ "RUBX|ساعة": {
+  "status": "NONE"
+ },
+ "RUBX|يومي": {
+  "status": "NONE"
+ },
+ "EGAL|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EGAL|ساعة": {
+  "status": "NONE"
+ },
+ "EGAL|يومي": {
+  "status": "NONE"
+ },
+ "ALUM|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ALUM|ساعة": {
+  "status": "NONE"
+ },
+ "ALUM|يومي": {
+  "status": "NONE"
+ },
+ "AALR|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AALR|ساعة": {
+  "status": "NONE"
+ },
+ "AALR|يومي": {
+  "status": "NONE"
+ },
+ "EALR|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EALR|ساعة": {
+  "status": "NONE"
+ },
+ "EALR|يومي": {
+  "status": "NONE"
+ },
+ "IEEC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "IEEC|ساعة": {
+  "status": "NONE"
+ },
+ "IEEC|يومي": {
+  "status": "NONE"
+ },
+ "INEG|15 دقيقة": {
+  "status": "NONE"
+ },
+ "INEG|ساعة": {
+  "status": "NONE"
+ },
+ "INEG|يومي": {
+  "status": "NONE"
+ },
+ "CAED|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CAED|ساعة": {
+  "status": "NONE"
+ },
+ "CAED|يومي": {
+  "status": "NONE"
+ },
+ "MOED|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MOED|ساعة": {
+  "status": "NONE"
+ },
+ "MOED|يومي": {
+  "status": "NONE"
+ },
+ "ROTO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ROTO|ساعة": {
+  "status": "NONE"
+ },
+ "ROTO|يومي": {
+  "status": "NONE"
+ },
+ "EGAS|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EGAS|ساعة": {
+  "status": "NONE"
+ },
+ "EGAS|يومي": {
+  "status": "NONE"
+ },
+ "AMIA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AMIA|ساعة": {
+  "status": "NONE"
+ },
+ "AMIA|يومي": {
+  "status": "NONE"
+ },
+ "KWIN|15 دقيقة": {
+  "status": "NONE"
+ },
+ "KWIN|ساعة": {
+  "status": "NONE"
+ },
+ "KWIN|يومي": {
+  "status": "NONE"
+ },
+ "GGRN|15 دقيقة": {
+  "status": "NONE"
+ },
+ "GGRN|ساعة": {
+  "status": "NONE"
+ },
+ "GGRN|يومي": {
+  "status": "NONE"
+ },
+ "_last_update_id": 195874082,
+ "ATQA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ATQA|ساعة": {
+  "status": "NONE"
+ },
+ "ATQA|يومي": {
+  "status": "NONE"
+ },
+ "BIOC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "BIOC|ساعة": {
+  "status": "NONE"
+ },
+ "BIOC|يومي": {
+  "status": "NONE"
+ },
+ "COSG|15 دقيقة": {
+  "status": "NONE"
+ },
+ "COSG|ساعة": {
+  "status": "NONE"
+ },
+ "COSG|يومي": {
+  "status": "NONE"
+ },
+ "CRST|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CRST|ساعة": {
+  "status": "NONE"
+ },
+ "CRST|يومي": {
+  "status": "NONE"
+ },
+ "IFAP|15 دقيقة": {
+  "status": "NONE"
+ },
+ "IFAP|ساعة": {
+  "status": "NONE"
+ },
+ "IFAP|يومي": {
+  "status": "NONE"
+ },
+ "MBSC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MBSC|ساعة": {
+  "status": "NONE"
+ },
+ "MBSC|يومي": {
+  "status": "NONE"
+ },
+ "CIRA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CIRA|ساعة": {
+  "status": "NONE"
+ },
+ "CIRA|يومي": {
+  "status": "NONE"
+ },
+ "CLHO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CLHO|ساعة": {
+  "status": "NONE"
+ },
+ "CLHO|يومي": {
+  "status": "NONE"
+ },
+ "ISPH|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ISPH|ساعة": {
+  "status": "NONE"
+ },
+ "ISPH|يومي": {
+  "status": "NONE"
+ },
+ "JUFO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "JUFO|ساعة": {
+  "status": "NONE"
+ },
+ "JUFO|يومي": {
+  "status": "NONE"
+ },
+ "ORWE|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ORWE|ساعة": {
+  "status": "NONE"
+ },
+ "ORWE|يومي": {
+  "status": "NONE"
+ },
+ "RACC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "RACC|ساعة": {
+  "status": "NONE"
+ },
+ "RACC|يومي": {
+  "status": "NONE"
+ },
+ "KABO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "KABO|ساعة": {
+  "status": "NONE"
+ },
+ "KABO|يومي": {
+  "status": "NONE"
+ },
+ "KRDI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "KRDI|ساعة": {
+  "status": "NONE"
+ },
+ "KRDI|يومي": {
+  "status": "NONE"
+ },
+ "LCSW|15 دقيقة": {
+  "status": "NONE"
+ },
+ "LCSW|ساعة": {
+  "status": "NONE"
+ },
+ "LCSW|يومي": {
+  "status": "NONE"
+ },
+ "RMDA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "RMDA|ساعة": {
+  "status": "NONE"
+ },
+ "RMDA|يومي": {
+  "status": "NONE"
+ },
+ "SVCE|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SVCE|ساعة": {
+  "status": "NONE"
+ },
+ "SVCE|يومي": {
+  "status": "NONE"
+ },
+ "AIFI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "AIFI|ساعة": {
+  "status": "NONE"
+ },
+ "AIFI|يومي": {
+  "status": "NONE"
+ },
+ "CERA|15 دقيقة": {
+  "status": "NONE"
+ },
+ "CERA|ساعة": {
+  "status": "NONE"
+ },
+ "CERA|يومي": {
+  "status": "NONE"
+ },
+ "MCRO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MCRO|ساعة": {
+  "status": "NONE"
+ },
+ "MCRO|يومي": {
+  "status": "NONE"
+ },
+ "OBRI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "OBRI|ساعة": {
+  "status": "NONE"
+ },
+ "OBRI|يومي": {
+  "status": "NONE"
+ },
+ "OCPH|15 دقيقة": {
+  "status": "NONE"
+ },
+ "OCPH|ساعة": {
+  "status": "NONE"
+ },
+ "OCPH|يومي": {
+  "status": "NONE"
+ },
+ "SCEM|15 دقيقة": {
+  "status": "NONE"
+ },
+ "SCEM|ساعة": {
+  "status": "NONE"
+ },
+ "SCEM|يومي": {
+  "status": "NONE"
+ },
+ "TALM|15 دقيقة": {
+  "status": "NONE"
+ },
+ "TALM|ساعة": {
+  "status": "NONE"
+ },
+ "TALM|يومي": {
+  "status": "NONE"
+ },
+ "MBEG|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MBEG|ساعة": {
+  "status": "NONE"
+ },
+ "MBEG|يومي": {
+  "status": "NONE"
+ },
+ "ACGC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ACGC|ساعة": {
+  "status": "NONE"
+ },
+ "ACGC|يومي": {
+  "status": "NONE"
+ },
+ "ADCI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "ADCI|ساعة": {
+  "status": "NONE"
+ },
+ "ADCI|يومي": {
+  "status": "NONE"
+ },
+ "BIGP|15 دقيقة": {
+  "status": "NONE"
+ },
+ "BIGP|ساعة": {
+  "status": "NONE"
+ },
+ "BIGP|يومي": {
+  "status": "NONE"
+ },
+ "DGTZ|15 دقيقة": {
+  "status": "NONE"
+ },
+ "DGTZ|ساعة": {
+  "status": "NONE"
+ },
+ "DGTZ|يومي": {
+  "status": "NONE"
+ },
+ "EFIC|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EFIC|ساعة": {
+  "status": "NONE"
+ },
+ "EFIC|يومي": {
+  "status": "NONE"
+ },
+ "EPCO|15 دقيقة": {
+  "status": "NONE"
+ },
+ "EPCO|ساعة": {
+  "status": "NONE"
+ },
+ "EPCO|يومي": {
+  "status": "NONE"
+ },
+ "FNAR|15 دقيقة": {
+  "status": "NONE"
+ },
+ "FNAR|ساعة": {
+  "status": "NONE"
+ },
+ "FNAR|يومي": {
+  "status": "NONE"
+ },
+ "LUTS|15 دقيقة": {
+  "status": "NONE"
+ },
+ "LUTS|ساعة": {
+  "status": "NONE"
+ },
+ "LUTS|يومي": {
+  "status": "NONE"
+ },
+ "MPCI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "MPCI|ساعة": {
+  "status": "NONE"
+ },
+ "MPCI|يومي": {
+  "status": "NONE"
+ },
+ "OLFI|15 دقيقة": {
+  "status": "NONE"
+ },
+ "OLFI|ساعة": {
+  "status": "NONE"
+ },
+ "OLFI|يومي": {
+  "status": "NONE"
+ },
+ "_buy_seq": {
+  "date": "2026-10-27",
+  "n": 1
+ },
+ "_patterns": {
+  "last": {
+   "15 دقيقة": 1794486680.4011989,
+   "ساعة": 1794486680.4011989
+  },
+  "alerted": {
+   "15 دقيقة|CRST|flag|forming|2026-11-09 08:15:00": 1794227581.61302,
+   "15 دقيقة|MOED|flag|forming|2026-11-09 08:30:00": 1794227581.61302,
+   "15 دقيقة|CAED|flag|forming|2026-11-09 08:15:00": 1794227581.61302,
+   "15 دقيقة|LCSW|flag|forming|2026-11-09 08:45:00": 1794227581.61302,
+   "15 دقيقة|SIPC|flag|forming|2026-11-09 10:00:00": 1794227581.61302,
+   "ساعة|SKPC|flag|breakout|2026-11-05 12:00:00": 1794227581.61302,
+   "ساعة|ZEOT|flag|forming|2026-11-08 11:00:00": 1794227581.61302,
+   "ساعة|RACC|flag|forming|2026-11-08 10:00:00": 1794227581.61302,
+   "ساعة|UEFM|flag|forming|2026-11-08 10:00:00": 1794227581.61302,
+   "15 دقيقة|PRCL|flag|breakout|2026-11-09 08:15:00": 1794298334.8750432,
+   "15 دقيقة|LCSW|flag|breakout|2026-11-09 08:45:00": 1794298334.8750432,
+   "15 دقيقة|MILS|pennant|forming|2026-11-09 10:30:00": 1794298334.8750432,
+   "15 دقيقة|SWDY|flag|forming|2026-11-09 08:15:00": 1794298334.8750432,
+   "15 دقيقة|BIOC|flag|forming|2026-11-09 11:00:00": 1794301568.9616098,
+   "15 دقيقة|EGAS|pennant|breakout|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|ARCC|flag|forming|2026-11-10 08:30:00": 1794304829.836473,
+   "15 دقيقة|ATQA|flag|forming|2026-11-10 08:30:00": 1794304829.836473,
+   "15 دقيقة|COSG|flag|forming|2026-11-10 08:15:00": 1794304829.836473,
+   "15 دقيقة|SPMD|pennant|forming|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|ZEOT|flag|forming|2026-11-10 08:15:00": 1794304829.836473,
+   "15 دقيقة|ORWE|flag|forming|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|RUBX|flag|forming|2026-11-10 08:30:00": 1794304829.836473,
+   "15 دقيقة|SIPC|flag|forming|2026-11-09 10:15:00": 1794304829.836473,
+   "15 دقيقة|SVCE|flag|forming|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|SCEM|flag|breakout|2026-11-10 08:15:00": 1794304829.836473,
+   "15 دقيقة|SWDY|pennant|breakout|2026-11-10 08:30:00": 1794304829.836473,
+   "15 دقيقة|TALM|flag|forming|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|DGTZ|flag|breakout|2026-11-10 08:00:00": 1794304829.836473,
+   "15 دقيقة|VERT|flag|forming|2026-11-09 10:00:00": 1794304829.836473,
+   "ساعة|EGAS|flag|forming|2026-11-09 08:00:00": 1794304829.836473,
+   "ساعة|ARCC|flag|forming|2026-11-09 08:00:00": 1794304829.836473,
+   "ساعة|ISPH|flag|forming|2026-11-09 09:00:00": 1794304829.836473,
+   "ساعة|OBRI|flag|breakout|2026-11-09 08:00:00": 1794304829.836473,
+   "ساعة|SCEM|flag|forming|2026-11-09 08:00:00": 1794304829.836473,
+   "ساعة|MBEG|flag|forming|2026-11-09 09:00:00": 1794304829.836473,
+   "15 دقيقة|ATQA|flag|forming|2026-11-10 09:15:00": 1794308135.173785,
+   "15 دقيقة|IFAP|flag|forming|2026-11-10 08:45:00": 1794308135.173785,
+   "15 دقيقة|MBSC|flag|forming|2026-11-10 08:00:00": 1794308135.173785,
+   "15 دقيقة|CIRA|pennant|breakout|2026-11-10 08:45:00": 1794308135.173785,
+   "15 دقيقة|EFID|flag|forming|2026-11-10 08:45:00": 1794308135.173785,
+   "15 دقيقة|MCQE|flag|forming|2026-11-10 08:30:00": 1794308135.173785,
+   "15 دقيقة|SPIN|flag|breakout|2026-11-10 08:00:00": 1794308135.173785,
+   "15 دقيقة|ADCI|pennant|forming|2026-11-09 11:00:00": 1794308135.173785,
+   "15 دقيقة|EPCO|flag|forming|2026-11-09 11:15:00": 1794308135.173785,
+   "ساعة|CRST|flag|forming|2026-11-08 12:00:00": 1794308135.173785,
+   "ساعة|IFAP|flag|forming|2026-11-08 08:00:00": 1794308135.173785,
+   "ساعة|SIPC|flag|forming|2026-11-09 10:00:00": 1794308135.173785,
+   "15 دقيقة|EGAL|flag|forming|2026-11-10 09:30:00": 1794311192.8630927,
+   "15 دقيقة|IFAP|flag|breakout|2026-11-10 08:45:00": 1794311192.8630927,
+   "15 دقيقة|AJWA|flag|forming|2026-11-10 10:15:00": 1794311192.8630927,
+   "15 دقيقة|EFID|flag|breakout|2026-11-10 08:45:00": 1794311192.8630927,
+   "15 دقيقة|ISPH|flag|forming|2026-11-10 08:00:00": 1794311192.8630927,
+   "15 دقيقة|ALUM|flag|forming|2026-11-10 09:45:00": 1794311192.8630927,
+   "15 دقيقة|NIPH|flag|forming|2026-11-10 08:00:00": 1794311192.8630927,
+   "15 دقيقة|ACGC|flag|forming|2026-11-10 09:30:00": 1794311192.8630927,
+   "15 دقيقة|AMII|flag|forming|2026-11-10 08:00:00": 1794311192.8630927,
+   "15 دقيقة|DGTZ|flag|forming|2026-11-10 08:00:00": 1794311192.8630927,
+   "15 دقيقة|MPCI|flag|forming|2026-11-10 08:00:00": 1794311192.8630927,
+   "15 دقيقة|SPIN|flag|forming|2026-11-10 10:30:00": 1794385073.6225545,
+   "15 دقيقة|NIPH|flag|forming|2026-11-10 09:30:00": 1794385073.6225545,
+   "15 دقيقة|OCPH|flag|forming|2026-11-10 10:30:00": 1794385073.6225545,
+   "15 دقيقة|TALM|flag|forming|2026-11-10 08:30:00": 1794385073.6225545,
+   "15 دقيقة|AMII|flag|forming|2026-11-10 08:30:00": 1794385073.6225545,
+   "15 دقيقة|ROTO|flag|breakout|2026-11-10 09:15:00": 1794385073.6225545,
+   "ساعة|ICFC|flag|forming|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|SPIN|flag|forming|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|INFI|pennant|breakout|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|RMDA|flag|forming|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|SVCE|flag|breakout|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|GOUR|flag|forming|2026-11-09 08:00:00": 1794385073.6225545,
+   "ساعة|SMFR|flag|forming|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|TALM|flag|forming|2026-11-10 08:00:00": 1794385073.6225545,
+   "ساعة|ADCI|pennant|forming|2026-11-09 11:00:00": 1794385073.6225545,
+   "ساعة|VERT|flag|forming|2026-11-08 11:00:00": 1794385073.6225545,
+   "15 دقيقة|BIOC|flag|forming|2026-11-10 09:30:00": 1794388724.410857,
+   "15 دقيقة|EEII|flag|forming|2026-11-10 10:30:00": 1794388724.410857,
+   "15 دقيقة|EPCO|flag|forming|2026-11-10 11:15:00": 1794388724.410857,
+   "ساعة|CLHO|flag|forming|2026-11-10 08:00:00": 1794388724.410857,
+   "ساعة|INFI|pennant|forming|2026-11-10 08:00:00": 1794388724.410857,
+   "ساعة|SVCE|flag|forming|2026-11-10 08:00:00": 1794388724.410857,
+   "ساعة|VERT|pennant|forming|2026-11-08 12:00:00": 1794388724.410857,
+   "15 دقيقة|EFID|flag|forming|2026-11-10 12:00:00": 1794392606.844111,
+   "15 دقيقة|DGTZ|flag|breakout|2026-11-11 08:00:00": 1794392606.844111,
+   "15 دقيقة|FNAR|flag|forming|2026-11-11 08:00:00": 1794392606.844111,
+   "ساعة|IFAP|flag|forming|2026-11-10 08:00:00": 1794392606.844111,
+   "ساعة|ALUM|flag|forming|2026-11-10 09:00:00": 1794392606.844111,
+   "ساعة|EFIC|flag|forming|2026-11-10 08:00:00": 1794392606.844111,
+   "ساعة|VERT|flag|breakout|2026-11-09 08:00:00": 1794392606.844111,
+   "15 دقيقة|MTIE|flag|forming|2026-11-11 08:00:00": 1794396261.337809,
+   "15 دقيقة|AXPH|flag|forming|2026-11-11 08:00:00": 1794396261.337809,
+   "15 دقيقة|UEFM|pennant|forming|2026-11-11 09:15:00": 1794396261.337809,
+   "15 دقيقة|INEG|flag|forming|2026-11-11 08:00:00": 1794396261.337809,
+   "ساعة|AJWA|flag|forming|2026-11-10 10:00:00": 1794396261.337809,
+   "ساعة|INFI|flag|forming|2026-11-10 08:00:00": 1794396261.337809,
+   "ساعة|GOUR|flag|forming|2026-11-10 08:00:00": 1794396261.337809,
+   "ساعة|EPCO|flag|forming|2026-11-09 11:00:00": 1794396261.337809,
+   "15 دقيقة|EGAS|flag|forming|2026-11-11 10:45:00": 1794399812.8449655,
+   "15 دقيقة|AJWA|flag|breakout|2026-11-11 08:15:00": 1794399812.8449655,
+   "ساعة|ISPH|flag|forming|2026-11-10 08:00:00": 1794399812.8449655,
+   "15 دقيقة|AJWA|flag|breakout|2026-11-11 08:30:00": 1794471589.0745704,
+   "15 دقيقة|EALR|flag|forming|2026-11-11 09:00:00": 1794471589.0745704,
+   "ساعة|IFAP|flag|breakout|2026-11-10 08:00:00": 1794471589.0745704,
+   "ساعة|JUFO|flag|forming|2026-11-11 08:00:00": 1794471589.0745704,
+   "ساعة|ORWE|pennant|forming|2026-11-11 08:00:00": 1794471589.0745704,
+   "ساعة|RACC|flag|forming|2026-11-11 08:00:00": 1794471589.0745704,
+   "ساعة|ALUM|flag|breakout|2026-11-10 09:00:00": 1794471589.0745704,
+   "ساعة|SIPC|flag|forming|2026-11-09 11:00:00": 1794471589.0745704,
+   "ساعة|BIGP|flag|forming|2026-11-10 11:00:00": 1794471589.0745704,
+   "ساعة|EEII|flag|forming|2026-11-10 10:00:00": 1794471589.0745704,
+   "15 دقيقة|MPCI|flag|forming|2026-11-11 12:00:00": 1794475466.0214732,
+   "ساعة|AJWA|flag|breakout|2026-11-10 10:00:00": 1794475466.0214732,
+   "ساعة|AIFI|flag|forming|2026-11-11 09:00:00": 1794475466.0214732,
+   "15 دقيقة|BIOC|flag|forming|2026-11-12 08:00:00": 1794479417.1635997,
+   "15 دقيقة|ZEOT|flag|forming|2026-11-11 10:30:00": 1794479417.1635997,
+   "15 دقيقة|AMES|flag|forming|2026-11-12 08:00:00": 1794479417.1635997,
+   "15 دقيقة|CAED|flag|forming|2026-11-12 08:00:00": 1794479417.1635997,
+   "15 دقيقة|DGTZ|flag|forming|2026-11-12 08:00:00": 1794479417.1635997,
+   "ساعة|AMES|flag|forming|2026-11-11 09:00:00": 1794479417.1635997,
+   "ساعة|MOSC|pennant|forming|2026-11-11 09:00:00": 1794479417.1635997,
+   "15 دقيقة|CRST|flag|forming|2026-11-12 09:45:00": 1794483072.341384,
+   "15 دقيقة|ZEOT|flag|forming|2026-11-12 08:00:00": 1794483072.341384,
+   "15 دقيقة|MOSC|flag|forming|2026-11-12 08:00:00": 1794483072.341384,
+   "15 دقيقة|NIPH|flag|forming|2026-11-12 10:00:00": 1794483072.341384,
+   "ساعة|TALM|flag|forming|2026-11-10 09:00:00": 1794483072.341384,
+   "ساعة|AMII|flag|forming|2026-11-11 08:00:00": 1794483072.341384,
+   "ساعة|EFIC|flag|forming|2026-11-10 12:00:00": 1794483072.341384,
+   "ساعة|ROTO|pennant|forming|2026-11-11 08:00:00": 1794483072.341384,
+   "15 دقيقة|EGAS|flag|forming|2026-11-12 09:45:00": 1794486680.4011989,
+   "15 دقيقة|BIOC|flag|forming|2026-11-12 10:00:00": 1794486680.4011989,
+   "15 دقيقة|IEEC|flag|forming|2026-11-12 08:00:00": 1794486680.4011989,
+   "ساعة|ALUM|flag|forming|2026-11-10 10:00:00": 1794486680.4011989,
+   "ساعة|MOSC|flag|forming|2026-11-11 09:00:00": 1794486680.4011989,
+   "ساعة|AIFI|flag|breakout|2026-11-11 09:00:00": 1794486680.4011989
+  }
+ },
+ "_ma200": {
+  "date": "2026-11-12",
+  "checked": [
+   "AALR",
+   "ACGC",
+   "ADCI",
+   "AIFI",
+   "AJWA",
+   "ALUM",
+   "AMES",
+   "AMII",
+   "AMOC",
+   "APSW",
+   "ARCC",
+   "ATQA",
+   "AXPH",
+   "BIGP",
+   "BIOC",
+   "BONY",
+   "CAED",
+   "CERA",
+   "CIRA",
+   "CLHO",
+   "COSG",
+   "CPCI",
+   "CRST",
+   "DGTZ",
+   "EALR",
+   "EEII",
+   "EFIC",
+   "EFID",
+   "EGAL",
+   "EPCO",
+   "ETEL",
+   "ETRS",
+   "FNAR",
+   "GGRN",
+   "GOUR",
+   "ICFC",
+   "IEEC",
+   "IFAP",
+   "INEG",
+   "ISMA",
+   "ISPH",
+   "JUFO",
+   "KRDI",
+   "LCSW",
+   "LUTS",
+   "MBEG",
+   "MBSC",
+   "MCQE",
+   "MCRO",
+   "MILS",
+   "MOED",
+   "MPCI",
+   "MPCO",
+   "MTIE",
+   "NIPH",
+   "OBRI",
+   "OCPH",
+   "OLFI",
+   "ORAS",
+   "ORWE",
+   "PRCL",
+   "RACC",
+   "RMDA",
+   "ROTO",
+   "RUBX",
+   "SCEM",
+   "SIPC",
+   "SKPC",
+   "SMFR",
+   "SPIN",
+   "SPMD",
+   "SVCE",
+   "SWDY",
+   "TALM",
+   "UEFM",
+   "VERT",
+   "ZEOT"
+  ]
+ },
+ "_best_date": "2026-11-12",
+ "_levels": {
+  "seen": {},
+  "log": [],
+  "done": {
+   "ABUK|weekly": "2026-11-13",
+   "ABUK|daily": "2026-11-13"
+  }
+ }
+}
