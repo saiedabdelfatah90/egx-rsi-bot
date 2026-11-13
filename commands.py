@@ -27,7 +27,13 @@ FRAMES = {
 }
 NAME_TO_INTERVAL = {v[0]: v[1] for v in FRAMES.values()}
 FRAME_ORDER = ["15 دقيقة", "ساعة", "يومي"]
-SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي"}
+
+# صفقات العلم والراية (بتتسجل من patterns.py)
+FLAG_FRAMES = ["علم/راية 15 دقيقة", "علم/راية ساعة"]
+ALL_FRAMES = FRAME_ORDER + FLAG_FRAMES
+FLAG_TF = {"علم/راية 15 دقيقة": "15 دقيقة", "علم/راية ساعة": "ساعة"}
+SHORT_FRAME = {"15 دقيقة": "15د", "ساعة": "ساعة", "يومي": "يومي",
+               "علم/راية 15 دقيقة": "علم 15د", "علم/راية ساعة": "علم ساعة"}
 
 # لازم تطابق إعدادات bot.py (لو غيّرتها هناك، غيّرها هنا)
 TARGETS = {"15 دقيقة": (3, 6), "ساعة": (5, 10), "يومي": (5, 10)}
@@ -39,6 +45,9 @@ REASONS = {
     "t2": "هدف ثاني",
     "stop": "وقف خسارة",
     "t1+stop": "هدف أول ثم وقف",
+    "flag_target": "هدف النموذج",
+    "flag_stop": "كسر الإبطال",
+    "flag_timeout": "انتهاء المدة",
 }
 CLOSED_LIMIT = 60
 LRM = "\u200e"
@@ -103,7 +112,9 @@ def set_menu():
         {"command": "excelrsih", "description": "تقرير RSI للساعة كملف Excel"},
         {"command": "excelrsim", "description": "تقرير RSI لـ15 دقيقة كملف Excel"},
         {"command": "flags", "description": "اكتشاف نماذج العلم والراية مع صور"},
-        {"command": "best", "description": "أفضل الأسهم للشراء (تصحيح فيبو)"},       
+        {"command": "best", "description": "أفضل الأسهم للشراء (تصحيح فيبو)"},
+        {"command": "reversal", "description": "اكتشاف الانعكاس بقاع أعلى مع صور"},
+        {"command": "engulf", "description": "اكتشاف الابتلاعية الصاعدة بعد قاعدة"},
         {"command": "help", "description": "شرح الاختصارات"},
     ]
     try:
@@ -127,7 +138,7 @@ def build_help():
         "/rsi — تقرير RSI للفريم اليومي\n"
         "/rsih — نفس التقرير على فريم الساعة\n"
         "/rsim — نفس التقرير على فريم 15 دقيقة\n"
-        "/open — الصفقات المفتوحة\n"
+        "/open — الصفقات المفتوحة (RSI والعلم والراية)\n"
         "/closed — الصفقات المقفولة النهاردة بالتفاصيل\n"
         "/closedweek — الصفقات المقفولة آخر 7 أيام\n"
         "/closedall — كل الصفقات المقفولة من الأول\n"
@@ -141,6 +152,8 @@ def build_help():
         "/excelrsim — تقرير RSI لـ15 دقيقة كملف Excel\n"
         "/flags — اكتشاف نماذج العلم والراية مع صور\n"
         "/best — أفضل الأسهم للشراء (تصحيح فيبو وهامر وحجم)\n"
+        "/reversal — اكتشاف الانعكاس بقاع أعلى مع صور\n"
+        "/engulf — اكتشاف الابتلاعية الصاعدة بعد قاعدة\n"
         "/help — القايمة دي\n\n"
         "ℹ️ الرد بيوصل في التشغيل الجاي (لحد 5 دقايق في ساعات الجلسة).\n"
         "تنبيهات الشراء والبيع والتقرير اليومي بيوصلوا لوحدهم."
@@ -244,6 +257,13 @@ def current_price(tv, sym, fr):
         return None
 
 
+def flag_open_items(state):
+    d = state.get("_flag_trades")
+    if not isinstance(d, dict):
+        return []
+    return [t for t in d.values() if isinstance(t, dict) and t.get("tf") in NAME_TO_INTERVAL]
+
+
 def build_open_report(tv, state):
     by_frame = {fr: [] for fr in FRAME_ORDER}
     for key, pos in state.items():
@@ -255,7 +275,8 @@ def build_open_report(tv, state):
         if fr in by_frame:
             by_frame[fr].append((sym, pos))
 
-    total = sum(len(v) for v in by_frame.values())
+    flags_open = sorted(flag_open_items(state), key=lambda t: (t["tf"], t["sym"]))
+    total = sum(len(v) for v in by_frame.values()) + len(flags_open)
     if total == 0:
         return "🔓 لا توجد صفقات مفتوحة حالياً"
 
@@ -292,6 +313,21 @@ def build_open_report(tv, state):
             lines.append(f"الوقف: {stop:.2f}")
             lines.append(f"الهدف الأول (+{t1p}%): {t1:.2f}" + (" ✅" if t1_done else ""))
             lines.append(f"الهدف الثاني (+{t2p}%): {t2:.2f}")
+            lines.append("")
+
+    if flags_open:
+        lines.append(f"━━ علم / راية ({len(flags_open)}) ━━")
+        for t in flags_open:
+            kind = "علم" if t.get("kind") == "flag" else "راية"
+            price = current_price(tv, t["sym"], t["tf"])
+            lines.append(f"📌 {t['sym']} — {kind} على فريم {t['tf']}")
+            lines.append(f"دخول (سعر التنبيه): {t['entry']:.2f} | وقت الدخول: {t.get('entry_time', '—')}")
+            if price is None:
+                lines.append("السعر الحالي: غير متاح")
+            else:
+                result = (price - t["entry"]) / t["entry"] * 100
+                lines.append(f"السعر الحالي: {price:.2f} | النتيجة الحالية: {result:+.2f}%")
+            lines.append(f"الوقف: {t['stop']:.2f} | الهدف: {t['target']:.2f}")
             lines.append("")
     return "\n".join(lines)
 
@@ -330,13 +366,13 @@ def load_dict(path):
 
 
 def load_trades():
-    # بنقرا صفقات الفريمات الثلاثة بس
+    # صفقات RSI وصفقات العلم والراية
     if os.path.exists(TRADES_FILE):
         try:
             with open(TRADES_FILE, encoding="utf-8") as f:
                 data = json.load(f)
                 if isinstance(data, list):
-                    return [t for t in data if t.get("frame") in FRAME_ORDER]
+                    return [t for t in data if t.get("frame") in ALL_FRAMES]
         except Exception:
             return []
     return []
@@ -347,17 +383,21 @@ def build_today_report(state):
     todays = [t for t in load_trades() if t.get("date") == today]
 
     parts = [f"📅 إحصائية يوم {today} (حتى الآن)", ""]
-    for fr in FRAME_ORDER:
+    for fr in ALL_FRAMES:
         parts.append(stats_block(f"فريم {fr}", [t for t in todays if t.get("frame") == fr]))
         parts.append("")
     parts.append(stats_block("الإجمالي", todays))
 
-    open_counts = {fr: 0 for fr in FRAME_ORDER}
+    open_counts = {fr: 0 for fr in ALL_FRAMES}
     for key, pos in state.items():
         if isinstance(pos, dict) and pos.get("status") in ("HALF", "FULL") and "|" in key:
             fr = key.split("|", 1)[-1]
             if fr in open_counts:
                 open_counts[fr] += 1
+    for t in flag_open_items(state):
+        label = "علم/راية " + t["tf"]
+        if label in open_counts:
+            open_counts[label] += 1
     parts.append("")
     parts.append("🔓 صفقات لسه مفتوحة:")
     parts += [f"{fr}: {n}" for fr, n in open_counts.items()]
@@ -386,7 +426,7 @@ def build_closed(period):
         lines.append("لا توجد صفقات مقفولة في الفترة دي")
         return "\n".join(lines)
 
-    for fr in FRAME_ORDER:
+    for fr in ALL_FRAMES:
         lines.append(stats_block(f"فريم {fr}", [t for t in items if t.get("frame") == fr]))
         lines.append("")
     lines.append(stats_block("الإجمالي", items))
