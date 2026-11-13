@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مساعد الدعوم والمقاومات</title>
+<style>
+:root{--bg:#0f1720;--card:#18232f;--tx:#e8eef5;--mu:#8da0b3;--ok:#2ecc71;--bd:#2a3a4a;--ac:#3b9cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,"Segoe UI",Tahoma,sans-serif;padding:14px 16px 80px}
+h1{font-size:19px;margin:4px 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+label{font-size:12px;color:var(--mu);display:block;margin-bottom:3px}
+input{width:100%;background:#0f1720;color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:9px;font-size:15px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.fr{font-size:13px;color:var(--ac);margin-top:10px;font-weight:600}
+button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-size:15px;margin:4px 0 0 6px}
+button.g{background:#2a3a4a}
+button.r{background:#c0392b}
+.top{display:flex;gap:8px;flex-wrap:wrap}
+.top>div{flex:1;min-width:130px}
+#msg{font-size:14px;margin-top:8px;min-height:20px}
+.s{font-size:12px;color:var(--mu);line-height:1.7}
+.hd{display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+<h1>🎯 مساعد الدعوم والمقاومات</h1>
+
+<div class="card">
+  <div class="hd"><b>إعداد الحفظ (مرة واحدة)</b></div>
+  <div class="row">
+    <div><label>اسم المستودع (مثال: user/repo)</label><input id="repo" dir="ltr" placeholder="user/repo"></div>
+    <div><label>GitHub Token</label><input id="tok" dir="ltr" type="password" placeholder="github_pat_..."></div>
+  </div>
+  <div class="s">التوكن بيتخزن في متصفحك بس، ومش بيتبعت لأي حد غير GitHub. من غيره استخدم زر «نسخ JSON».</div>
+</div>
+
+<div id="list"></div>
+
+<div class="card">
+  <b>إضافة / تعديل سهم</b>
+  <div class="top" style="margin-top:8px">
+    <div><label>السهم</label><input id="sym" dir="ltr" placeholder="CRST" style="text-transform:uppercase"></div>
+    <div><label>السعر الحالي</label><input id="price" type="number" step="any" inputmode="decimal"></div>
+  </div>
+  <div id="frames"></div>
+  <button id="add">حفظ السهم</button>
+  <button class="g" id="clr">مسح الخانات</button>
+</div>
+
+<div>
+  <button id="push">💾 حفظ على GitHub (للبوت)</button>
+  <button class="g" id="copy">📋 نسخ JSON</button>
+  <div id="msg"></div>
+  <div class="s">البوت بيقرا levels.json ويبعتلك تنبيه لما شمعة تقفل فوق الدعم، والهدف مقاومة نفس الفريم.</div>
+</div>
+
+<script>
+const FR=[["weekly","أسبوعي"],["daily","يومي"],["hourly","ساعة"],["m15","ربع ساعة"]];
+const $=id=>document.getElementById(id);
+const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let stocks=ls.get("lv_stocks",{});
+$("repo").value=ls.get("lv_repo","");
+$("tok").value=ls.get("lv_tok","");
+$("repo").onchange=()=>ls.set("lv_repo",$("repo").value.trim());
+$("tok").onchange=()=>ls.set("lv_tok",$("tok").value.trim());
+
+$("frames").innerHTML=FR.map(([k,n])=>`<div class="fr">${n}</div><div class="row">
+<div><label>دعم</label><input id="s_${k}" type="number" step="any" inputmode="decimal"></div>
+<div><label>مقاومة</label><input id="r_${k}" type="number" step="any" inputmode="decimal"></div></div>`).join("");
+
+function num(v){const x=parseFloat(v);return isNaN(x)?null:x}
+function render(){
+  const keys=Object.keys(stocks);
+  $("list").innerHTML=keys.map(s=>{const d=stocks[s];
+    const lines=FR.map(([k,n])=>{const l=d[k]||{};return l.support||l.resistance?`${n}: دعم ${l.support??"-"} ← هدف ${l.resistance??"-"}`:""}).filter(Boolean).join("<br>");
+    return `<div class="card"><div class="hd"><b dir="ltr">${s}</b><span>السعر: ${d.price??"-"}</span></div>
+    <div class="s">${lines||"لا مستويات"}</div>
+    <button class="g" onclick="edit('${s}')">تعديل</button><button class="r" onclick="del('${s}')">حذف</button></div>`}).join("");
+}
+window.edit=s=>{const d=stocks[s];$("sym").value=s;$("price").value=d.price??"";
+  FR.forEach(([k])=>{const l=d[k]||{};$("s_"+k).value=l.support??"";$("r_"+k).value=l.resistance??""});scrollTo(0,document.body.scrollHeight)};
+window.del=s=>{delete stocks[s];ls.set("lv_stocks",stocks);render()};
+$("clr").onclick=()=>{["sym","price",...FR.flatMap(([k])=>["s_"+k,"r_"+k])].forEach(i=>$(i).value="")};
+$("add").onclick=()=>{
+  const s=$("sym").value.trim().toUpperCase();
+  if(!s){say("اكتب اسم السهم","#e67e22");return}
+  const d={price:num($("price").value)};
+  FR.forEach(([k])=>{const a=num($("s_"+k).value),b=num($("r_"+k).value);
+    if(a!==null||b!==null)d[k]={support:a,resistance:b}});
+  stocks[s]=d;ls.set("lv_stocks",stocks);render();$("clr").onclick();say("اتحفظ محلياً. دوس «حفظ على GitHub» عشان البوت يشوفه","#2ecc71")};
+function say(t,c){$("msg").textContent=t;$("msg").style.color=c||"inherit"}
+const payload=()=>JSON.stringify({updated:new Date().toISOString(),stocks},null,1);
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(payload());say("اتنسخ. الصقه في levels.json على GitHub","#2ecc71")}catch(e){say("فشل النسخ","#e74c3c")}};
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+$("push").onclick=async()=>{
+  const repo=$("repo").value.trim(),tok=$("tok").value.trim();
+  if(!repo||!tok){say("املا اسم المستودع والتوكن الأول","#e67e22");return}
+  ls.set("lv_repo",repo);ls.set("lv_tok",tok);say("جاري الحفظ...");
+  const url=`https://api.github.com/repos/${repo}/contents/levels.json`;
+  const H={Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"};
+  try{
+    let sha;const g=await fetch(url,{headers:H});
+    if(g.ok)sha=(await g.json()).sha;
+    const r=await fetch(url,{method:"PUT",headers:H,body:JSON.stringify({message:"تحديث المستويات",content:b64(payload()),sha})});
+    if(r.ok)say("✅ اتحفظ. البوت هيقراه في الجولة الجاية","#2ecc71");
+    else say("❌ فشل: "+r.status+" "+(await r.text()).slice(0,120),"#e74c3c");
+  }catch(e){say("❌ خطأ في الاتصال","#e74c3c")}
+};
+render();
+</script>
+</body>
+</html>
