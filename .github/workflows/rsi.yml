@@ -62,7 +62,8 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python commands.py
-              - name: Levels alert
+        
+      - name: Levels alert
         run: python levels.py
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -73,7 +74,7 @@ jobs:
         run: |
           git config user.name "rsi-bot"
           git config user.email "rsi-bot@users.noreply.github.com"
-          for f in state.json trades.json market_data.json.levels.json docs/market_data.json; do
+          for f in state.json trades.json market_data.json levels.json docs/market_data.json; do
             [ -f "$f" ] && git add "$f"
           done
           git diff --cached --quiet && exit 0
