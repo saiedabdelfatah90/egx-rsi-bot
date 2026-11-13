@@ -57,17 +57,6 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: python excel_cmd.py
 
-      - name: Run commands
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
-        run: python commands.py
-        
-      - name: Levels alert
-        run: python levels.py
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
       - name: Reversal
         run: python reversal.py
         env:
@@ -79,7 +68,18 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-
+      - name: Run commands
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python commands.py
+        
+      - name: Levels alert
+        run: python levels.py
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          
       - name: Save state
         if: always()
         run: |
