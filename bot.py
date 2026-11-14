@@ -205,3 +205,11 @@ with open(TRADES_FILE, "w", encoding="utf-8") as f:
     json.dump(trades, f, ensure_ascii=False)
 with open("market_data.json", "w", encoding="utf-8") as f:
     json.dump({"updated": now_cairo().isoformat(), "market": list(market_data.values())}, f, ensure_ascii=False)
+
+# ===== أسعار لشيت جوجل (بيسحبها بـ IMPORTDATA) =====
+prices = {m["symbol"]: m["price"] for m in market_data.values()}
+with open("prices.csv", "w", encoding="utf-8") as f:
+    f.write("symbol,price,updated\n")
+    upd = now_cairo().strftime("%Y-%m-%d %H:%M")
+    for s, p in prices.items():
+        f.write(f"{s},{p},{upd}\n")
