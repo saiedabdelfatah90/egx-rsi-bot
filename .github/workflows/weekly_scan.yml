@@ -23,7 +23,7 @@ jobs:
 
       - name: Send Excel to Telegram
         env:
-          TOKEN: ${{ secrets.BOT_TOKEN }}
+          TOKEN: 8485577036:AAEnTiq09-saorZ-em3vTlXEH6qPWyU9euU
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: |
           curl -s -F chat_id="$CHAT_ID" \
