@@ -1,0 +1,38 @@
+name: Weekly strategy scan
+
+on:
+  workflow_dispatch:        # تشغيل يدوي من تبويب Actions
+  schedule:
+    - cron: "0 14 * * 4"    # كل خميس الساعة 4 العصر بتوقيت القاهرة بعد قفل السوق
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install packages
+        run: pip install yfinance pandas openpyxl
+
+      - name: Run scan
+        run: python weekly_scan.py
+
+      - name: Send Excel to Telegram
+        env:
+          TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: |
+          curl -s -F chat_id="$CHAT_ID" \
+               -F caption="نتايج فحص الاستراتيجية الأسبوعية 📊" \
+               -F document=@weekly_scan.xlsx \
+               "https://api.telegram.org/bot$TOKEN/sendDocument"
+
+      - name: Save Excel in Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly_scan
+          path: weekly_scan.xlsx
